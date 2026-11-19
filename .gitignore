@@ -1,0 +1,9 @@
+node_modules
+dist
+.netlify
+.claude
+.DS_Store
+nova-site-cpanel
+nova-site-cpanel.zip
+*.log
+.env*

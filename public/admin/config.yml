@@ -1,0 +1,58 @@
+# Decap CMS — the media-buyer gate.
+# Login is required (Netlify Identity, invite-only). Edits become drafts in a
+# pull request ("editorial_workflow"), so nothing goes live until an admin
+# publishes it. The media buyer only sees the fields below — no code access.
+backend:
+  name: git-gateway
+  branch: main
+
+publish_mode: editorial_workflow
+media_folder: public/uploads
+public_folder: /uploads
+site_url: https://novaadv.com
+
+collections:
+  - name: seo
+    label: "SEO — Page titles & descriptions"
+    files:
+      - name: seo
+        label: "Home page SEO"
+        file: content/seo.json
+        fields:
+          - label: Home
+            name: home
+            widget: object
+            fields:
+              - { label: "Title (30-60 chars)", name: title, widget: string, pattern: ['^.{30,70}$', "Use 30-70 characters"] }
+              - { label: "Meta description (70-160 chars)", name: description, widget: text, pattern: ['^.{70,160}$', "Use 70-160 characters"] }
+              - { label: "Social share image path", name: ogImage, widget: string, hint: "1200x630, e.g. /og-image.jpg" }
+          - { label: "Default description for work pages", name: workDefaultDescription, widget: text }
+
+  - name: work
+    label: "Case studies (Our Work)"
+    label_singular: "Case study"
+    folder: content/work
+    extension: json
+    format: json
+    create: true
+    delete: false          # deleting would break URLs — ask an admin
+    slug: "{{slug}}"
+    identifier_field: project
+    summary: "{{client}} — {{project}}"
+    fields:
+      - { label: "Order on site", name: order, widget: number, value_type: int, min: 1 }
+      - { label: "URL slug (never change on existing pages)", name: slug, widget: string, pattern: ['^[a-z0-9-]+$', "Lowercase letters, numbers and hyphens only"] }
+      - { label: Client, name: client, widget: string }
+      - { label: "Project title (H1)", name: project, widget: string }
+      - { label: Tag, name: tag, widget: string }
+      - { label: "Summary (shown on the page)", name: summary, widget: text }
+      - { label: "SEO title (30-70 chars)", name: seoTitle, widget: string, pattern: ['^.{30,70}$', "Use 30-70 characters"] }
+      - { label: "SEO description (70-160 chars)", name: seoDescription, widget: text, pattern: ['^.{70,160}$', "Use 70-160 characters"] }
+      - label: "Photos & alt text"
+        name: photos
+        widget: list
+        min: 1
+        hint: "Photo ID must match an optimized file in /public/work (e.g. work-05). New photos: ask a developer to run scripts/optimize-images.mjs first."
+        fields:
+          - { label: "Photo ID", name: id, widget: string, pattern: ['^work-\d+$', "Format: work-NN"] }
+          - { label: "Alt text (describe the image, 20-125 chars)", name: alt, widget: string, pattern: ['^.{20,125}$', "Use 20-125 characters"] }

@@ -1,0 +1,35 @@
+# NOVA — Apache config for cPanel hosting
+# This is a client-side-routed single-page app (React Router), so any
+# request that isn't an existing file or directory must fall through to
+# index.html and let the app's router handle it — otherwise a direct
+# visit or refresh on a route like /work/some-case-study 404s.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Let real files/directories (assets, images, etc.) serve normally.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Everything else goes to index.html for the SPA router.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Cache hashed build assets aggressively; never cache index.html so
+# deploys are picked up immediately.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
