@@ -8,6 +8,8 @@ import { useRef } from 'react';
 import useReveal from '../../hooks/useReveal';
 import useScrollEngine from '../../hooks/useScrollEngine';
 import SceneSVG from './SceneSVG';
+import RichText from '../RichText';
+import { HOME_TEXT } from '../../data';
 import { FACTORY_SVG, BOOTH_SVG } from './illustrations';
 
 export default function FFWBlock() {
@@ -41,10 +43,7 @@ export default function FFWBlock() {
           <h2 className="ffw-h">
             From <em>factory floor</em><br />to the <span className="ffw-h-accent shimmer">world stage.</span>
           </h2>
-          <p className="ffw-sub">
-            Precision manufacturing, entirely in-house. Every booth, stand, counter and installation —
-            built by us, delivered on time.
-          </p>
+          <RichText className="ffw-sub" text={HOME_TEXT.ffwSub} />
         </div>
 
         <div className="ffw-illustrations">

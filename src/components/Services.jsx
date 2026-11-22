@@ -15,6 +15,7 @@ import { useRef } from 'react';
 import useScrollEngine from '../hooks/useScrollEngine';
 import IcosahedronCanvas from './IcosahedronCanvas';
 import { SERVICES } from '../data';
+import RichText from './RichText';
 
 const ICONS = {
   home:          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>,
@@ -79,7 +80,11 @@ export default function Services() {
     const idx = Math.round(p);
     if (idx !== st.activeIdx) {
       st.activeIdx = idx;
-      infoRefs.current.forEach((el, i) => el?.classList.toggle('active', i === idx));
+      infoRefs.current.forEach((el, i) => {
+        if (!el) return;
+        el.classList.toggle('active', i === idx);
+        el.inert = i !== idx; // hidden panels: keep their links out of the tab order
+      });
       dotRefs.current.forEach((el, i) => el?.classList.toggle('active', i === idx));
     }
     if (barFillRef.current) barFillRef.current.style.width = `${(p / (N - 1)) * 100}%`;
@@ -102,6 +107,7 @@ export default function Services() {
                   key={svc.num}
                   ref={(el) => { infoRefs.current[i] = el; }}
                   className={`svc-info-item${i === 0 ? ' active' : ''}`}
+                  {...(i === 0 ? {} : { inert: '' })}
                 >
                   <div className="svc-info-num">{svc.num} / {String(N).padStart(2, '0')} Services</div>
                   <h3 className="svc-info-title">
@@ -109,7 +115,7 @@ export default function Services() {
                       <span key={li}>{line}{li === 0 && <br />}</span>
                     ))}
                   </h3>
-                  <p className="svc-info-desc">{svc.desc}</p>
+                  <RichText className="svc-info-desc" text={svc.desc} />
                 </div>
               ))}
             </div>

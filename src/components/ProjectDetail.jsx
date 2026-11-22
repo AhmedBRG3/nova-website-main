@@ -6,10 +6,12 @@
 //  that build, plus client/project context.
 // ─────────────────────────────────────────
 import { Link, useParams } from 'react-router-dom';
-import { CASE_STUDIES, getCaseStudy } from '../data/caseStudies';
+import { CASE_STUDIES, SEO_CONTENT as seo, getCaseStudy } from '../data/caseStudies';
 import { WORK_PHOTO_BY_BASE } from '../data';
 import useSeo from '../hooks/useSeo';
-import seo from '../../content/seo.json';
+import RichText from './RichText';
+import { stripRichText } from '../lib/richText';
+
 
 const GRID_SIZES = '(max-width:768px) 92vw, (max-width:900px) 80vw, 760px';
 
@@ -19,7 +21,7 @@ export default function ProjectDetail() {
   const heroPhoto = study && WORK_PHOTO_BY_BASE[study.photos[0]];
   useSeo({
     title: study ? study.seoTitle || `${study.project} | NOVA` : 'Project not found | NOVA',
-    description: study ? study.seoDescription || study.summary : seo.workDefaultDescription,
+    description: study ? study.seoDescription || stripRichText(study.summary) : seo.workDefaultDescription,
     path: `/work/${slug}`,
     image: heroPhoto ? heroPhoto.fallback : undefined,
     noindex: !study,
@@ -49,7 +51,7 @@ export default function ProjectDetail() {
         <p className="section-eyebrow">{study.tag}</p>
         <h1 className="case-study-title">{study.project}</h1>
         <p className="case-study-client">{study.client}</p>
-        <p className="case-study-summary">{study.summary}</p>
+        <RichText className="case-study-summary" text={study.summary} />
       </div>
 
       {hero && (

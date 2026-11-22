@@ -1,0 +1,212 @@
+[
+  {
+    "in": "Plain text only.",
+    "out": [
+      {
+        "type": "text",
+        "text": "Plain text only."
+      }
+    ]
+  },
+  {
+    "in": "See [our factory](/#services) now.",
+    "out": [
+      {
+        "type": "text",
+        "text": "See "
+      },
+      {
+        "type": "link",
+        "text": "our factory",
+        "href": "/#services",
+        "kind": "internal"
+      },
+      {
+        "type": "text",
+        "text": " now."
+      }
+    ]
+  },
+  {
+    "in": "[Pfizer](https://www.pfizer.com/about?x=1#top)",
+    "out": [
+      {
+        "type": "link",
+        "text": "Pfizer",
+        "href": "https://www.pfizer.com/about?x=1#top",
+        "kind": "external"
+      }
+    ]
+  },
+  {
+    "in": "[Email](mailto:info@novaadv.com) or [call](tel:+201299911031)",
+    "out": [
+      {
+        "type": "link",
+        "text": "Email",
+        "href": "mailto:info@novaadv.com",
+        "kind": "mailto"
+      },
+      {
+        "type": "text",
+        "text": " or "
+      },
+      {
+        "type": "link",
+        "text": "call",
+        "href": "tel:+201299911031",
+        "kind": "tel"
+      }
+    ]
+  },
+  {
+    "in": "[case](/work/vyndamax-pfizer) and [anchor](#contact)",
+    "out": [
+      {
+        "type": "link",
+        "text": "case",
+        "href": "/work/vyndamax-pfizer",
+        "kind": "internal"
+      },
+      {
+        "type": "text",
+        "text": " and "
+      },
+      {
+        "type": "link",
+        "text": "anchor",
+        "href": "#contact",
+        "kind": "internal"
+      }
+    ]
+  },
+  {
+    "in": "[x](javascript:alert(1))",
+    "out": [
+      {
+        "type": "text",
+        "text": "[x](javascript:alert(1))"
+      }
+    ]
+  },
+  {
+    "in": "[x](javascript:alert`1`)",
+    "out": [
+      {
+        "type": "link",
+        "text": "x",
+        "href": "javascript:alert`1`",
+        "kind": "invalid"
+      }
+    ]
+  },
+  {
+    "in": "[x](data:text/html;base64,PHNjcmlwdD4=)",
+    "out": [
+      {
+        "type": "link",
+        "text": "x",
+        "href": "data:text/html;base64,PHNjcmlwdD4=",
+        "kind": "invalid"
+      }
+    ]
+  },
+  {
+    "in": "[x](//evil.com)",
+    "out": [
+      {
+        "type": "link",
+        "text": "x",
+        "href": "//evil.com",
+        "kind": "invalid"
+      }
+    ]
+  },
+  {
+    "in": "[bad](https://exa mple.com)",
+    "out": [
+      {
+        "type": "text",
+        "text": "[bad](https://exa mple.com)"
+      }
+    ]
+  },
+  {
+    "in": "Nested [a [b]](/) text",
+    "out": [
+      {
+        "type": "text",
+        "text": "Nested [a [b]](/) text"
+      }
+    ]
+  },
+  {
+    "in": "[sic] stays text",
+    "out": [
+      {
+        "type": "text",
+        "text": "[sic] stays text"
+      }
+    ]
+  },
+  {
+    "in": "عربي [نوفا](https://novaadv.com) نص",
+    "out": [
+      {
+        "type": "text",
+        "text": "عربي "
+      },
+      {
+        "type": "link",
+        "text": "نوفا",
+        "href": "https://novaadv.com",
+        "kind": "external"
+      },
+      {
+        "type": "text",
+        "text": " نص"
+      }
+    ]
+  },
+  {
+    "in": "[<b>](https://a.co/\"onmouseover=x)",
+    "out": [
+      {
+        "type": "link",
+        "text": "<b>",
+        "href": "https://a.co/\"onmouseover=x",
+        "kind": "invalid"
+      }
+    ]
+  },
+  {
+    "in": "[Up](/work/Bad_Slug)",
+    "out": [
+      {
+        "type": "link",
+        "text": "Up",
+        "href": "/work/Bad_Slug",
+        "kind": "invalid"
+      }
+    ]
+  },
+  {
+    "in": "Nested [a [b](/) text",
+    "out": [
+      {
+        "type": "text",
+        "text": "Nested [a "
+      },
+      {
+        "type": "link",
+        "text": "b",
+        "href": "/",
+        "kind": "internal"
+      },
+      {
+        "type": "text",
+        "text": " text"
+      }
+    ]
+  }
+]

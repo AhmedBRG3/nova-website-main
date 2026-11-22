@@ -1,0 +1,102 @@
+{
+  "hero": {
+    "line1": "We Don't Just Market.",
+    "line2": "We Create Moments.",
+    "sub": "Brand activations, events & exhibitions, roadshows, and digital experiences in Egypt —\nconnecting people to what matters."
+  },
+  "services": [
+    {
+      "title": "Events &\nExhibitions",
+      "desc": "We turn ideas into unforgettable events, exhibitions, and large-scale experiences that stay with audiences long after the lights go down."
+    },
+    {
+      "title": "Brand\nActivations",
+      "desc": "Bold activations that surprise, engage, and connect your brand with real people — creating memories, not just impressions."
+    },
+    {
+      "title": "Nationwide\nRoadshows",
+      "desc": "Roadshows that travel nationwide, bringing your brand alive across every destination — from Cairo to the coast."
+    },
+    {
+      "title": "Digital\nExperiences",
+      "desc": "Interactive games, leaderboards, and immersive screens that captivate audiences and turn passive viewers into active participants."
+    },
+    {
+      "title": "In-House\nProduction",
+      "desc": "Crafted with precision from our own factory — booths, stands, counters, and custom builds delivered on time, every time."
+    },
+    {
+      "title": "Retail &\nOutdoor",
+      "desc": "From toll stations to in-store demos, we connect shoppers everywhere they go — at the exact moment that matters most."
+    },
+    {
+      "title": "Digital\nMarketing",
+      "desc": "Social media, paid campaigns, content, and performance marketing that extend your brand beyond the venue — and keep the conversation going online."
+    }
+  ],
+  "about": {
+    "body": "NOVA is a full-service brand experience agency headquartered in Cairo. We combine creative strategy, flawless production, and fearless activation to build brands people remember — and love.",
+    "values": [
+      "Honesty",
+      "Fast Delivery",
+      "High Quality",
+      "Low Cost",
+      "Full-Service Team",
+      "Multinational Partners"
+    ]
+  },
+  "iei": {
+    "body": "We transform briefs into brand moments that move people — literally and emotionally. Every project begins with vision and ends with results.",
+    "cards": [
+      "Every campaign starts with a question no one has asked yet. We dream before we plan.",
+      "A full in-house team and factory, and a relentless drive to build what others can't.",
+      "Brands don't just reach people — they move them."
+    ]
+  },
+  "sms": {
+    "sub": "Every campaign we build begins with a single question: what feeling do you want people to carry home?",
+    "steps": [
+      {
+        "title": "Brief & Discovery",
+        "desc": "We listen harder than anyone else in the room. Goals, audience, tension — we map it all before a single concept is drawn."
+      },
+      {
+        "title": "Creative Strategy",
+        "desc": "Data meets intuition. We find the insight that makes your brand impossible to ignore — then build the story around it."
+      },
+      {
+        "title": "Experience Design",
+        "desc": "From a napkin sketch to a full activation floor — every detail is designed to make people feel something real."
+      },
+      {
+        "title": "Live & Measure",
+        "desc": "We execute flawlessly, then track what moved — because a great story is only great if people remember it tomorrow."
+      }
+    ]
+  },
+  "ffw": {
+    "sub": "Precision manufacturing, entirely in-house. Every booth, stand, counter and installation — built by us, delivered on time."
+  },
+  "ybe": {
+    "sub": "Roadshows, retail activations, toll stations, in-store demos — we place your brand exactly where people are.",
+    "cards": [
+      "Branded vehicles that travel city to city — turning every street into a stage for your campaign.",
+      "Pop-up activations inside malls and retail parks that pull shoppers in and turn browsers into brand fans.",
+      "Captive audiences at every gate — branded gantries, booth wraps and sampling while they wait.",
+      "Live demos inside stores — trained brand ambassadors who turn shelf browsers into buyers on the spot."
+    ]
+  },
+  "clients": [
+    "Sanofi",
+    "AstraZeneca",
+    "Boehringer Ingelheim",
+    "Novo Nordisk",
+    "Attieh Medico",
+    "Tamer",
+    "Ministry of Health",
+    "L'Oréal"
+  ],
+  "contact": {
+    "body": "Tell us your brand's next chapter. We'll handle the rest — from the first sketch to the final spotlight."
+  }
+}

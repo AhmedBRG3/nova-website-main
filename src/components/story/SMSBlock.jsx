@@ -9,7 +9,8 @@ import { useRef } from 'react';
 import useReveal from '../../hooks/useReveal';
 import useScrollEngine from '../../hooks/useScrollEngine';
 import IcosahedronCanvas from '../IcosahedronCanvas';
-import { SMS_STEPS } from '../../data';
+import { SMS_STEPS, HOME_TEXT } from '../../data';
+import RichText from '../RichText';
 
 export default function SMSBlock() {
   const blockRef = useRef(null);
@@ -52,10 +53,7 @@ export default function SMSBlock() {
             <span className="sms-h-plain sms-h-sm">meets</span>
             <span className="sms-h-italic shimmer accent-serif">Story.</span>
           </h2>
-          <p className="sms-sub">
-            Every campaign we build begins with a single question: what feeling do you want
-            people to carry home?
-          </p>
+          <RichText className="sms-sub" text={HOME_TEXT.smsSub} />
           <div className="sms-quote">
             <div className="sms-quote-bar" />
             <p className="sms-quote-text">"We don't sell space. We architect emotion."</p>
@@ -74,7 +72,7 @@ export default function SMSBlock() {
               <div className="sms-step-num">{step.num}</div>
               <div className="sms-step-body">
                 <div className="sms-step-title">{step.title}</div>
-                <div className="sms-step-desc">{step.desc}</div>
+                <RichText as="div" className="sms-step-desc" text={step.desc} />
               </div>
             </div>
           ))}

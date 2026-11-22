@@ -9,7 +9,8 @@ import useReveal from '../hooks/useReveal';
 import useMagnet from '../hooks/useMagnet';
 import IcosahedronCanvas from './IcosahedronCanvas';
 import ContactForm from './ContactForm';
-import { CONTACT } from '../data';
+import { CONTACT, HOME_TEXT } from '../data';
+import RichText from './RichText';
 
 export default function Contact() {
   const contentRef = useReveal();
@@ -25,10 +26,7 @@ export default function Contact() {
         <h2 className="contact-title">
           Ready to make<br />something <em className="shimmer">amazing?</em>
         </h2>
-        <p className="contact-body">
-          Tell us your brand's next chapter. We'll handle the rest — from the first sketch
-          to the final spotlight.
-        </p>
+        <RichText className="contact-body" text={HOME_TEXT.contactBody} />
 
         <ContactForm />
 

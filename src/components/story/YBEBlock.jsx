@@ -10,7 +10,8 @@
 import { useRef } from 'react';
 import useReveal from '../../hooks/useReveal';
 import useScrollEngine from '../../hooks/useScrollEngine';
-import { YBE_CARDS } from '../../data';
+import { YBE_CARDS, HOME_TEXT } from '../../data';
+import RichText from '../RichText';
 import { ROADSHOW_SVG, RETAIL_SVG, TOLL_SVG, INSTORE_SVG } from './illustrations';
 
 const SCENES = {
@@ -55,7 +56,7 @@ function YBECard({ card, delay }) {
         dangerouslySetInnerHTML={{ __html: SCENES[card.scene] }}
       />
       <div className="ybe-card-info">
-        <p className="ybe-card-desc">{card.desc}</p>
+        <RichText className="ybe-card-desc" text={card.desc} />
       </div>
     </div>
   );
@@ -87,10 +88,7 @@ export default function YBEBlock() {
         <div className="ybe-headline rv" ref={headRef}>
           <p className="ybe-eyebrow">Brand Reach</p>
           <h2 className="ybe-h">Your brand,<br /><em className="ybe-h-em shimmer accent-serif">everywhere</em> at once.</h2>
-          <p className="ybe-sub">
-            Roadshows, retail activations, toll stations, in-store demos — we place your brand
-            exactly where people are.
-          </p>
+          <RichText className="ybe-sub" text={HOME_TEXT.ybeSub} />
         </div>
 
         <div className="ybe-grid">

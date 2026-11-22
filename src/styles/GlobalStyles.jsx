@@ -407,6 +407,9 @@ body.loaded .scroll-ind{opacity:1;transition:opacity 1s ease 2.6s}
 .section-eyebrow{font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;color:var(--hot);margin-bottom:1.5rem}
 .section-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,5rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;color:var(--light);margin-bottom:1.5rem}
 .section-body{font-size:1.05rem;line-height:1.8;color:var(--silver);max-width:600px;font-weight:300}
+/* Links inside CMS-edited copy (<RichText />): inherit the paragraph colour, accent underline */
+.rt-link{color:inherit;text-decoration:underline;text-decoration-color:var(--pulse);text-decoration-thickness:1px;text-underline-offset:3px;transition:color .25s,text-decoration-color .25s}
+.rt-link:hover{color:var(--hot);text-decoration-color:var(--hot)}
 .about-visual{position:relative;height:600px}
 .about-orb{position:absolute;border-radius:50%;filter:blur(65px);animation:orbFloat 9s ease-in-out infinite;pointer-events:none}
 .orb-1{width:410px;height:410px;background:radial-gradient(circle,rgba(236,32,39,.28),transparent 70%);top:10%;left:5%}

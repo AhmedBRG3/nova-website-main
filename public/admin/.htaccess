@@ -1,0 +1,13 @@
+# The root .htaccess sets "DirectoryIndex seo.php index.html", and that is
+# inherited here, so /admin/ would 403 without this line.
+DirectoryIndex index.php
+
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+  Header set Cache-Control "no-store"
+</IfModule>
+
+# Helpers are only ever included by index.php.
+<FilesMatch "^(lib|richtext)\.php$">
+  Require all denied
+</FilesMatch>

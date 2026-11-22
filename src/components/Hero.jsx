@@ -18,8 +18,8 @@ import useScrollEngine from '../hooks/useScrollEngine';
 import useMagnet from '../hooks/useMagnet';
 import useSplitChars from '../hooks/useSplitChars';
 import initIcosahedronScene from '../three/icosahedronScene';
-
-const LINES = ["We Don't Just Market.", 'We Create Moments.', ' '];
+import { HOME_TEXT } from '../data';
+import RichText from './RichText';
 
 function SplitLine({ text, startIndex, shimmer }) {
   const chars = useSplitChars(text, startIndex);
@@ -59,6 +59,9 @@ function SplitLine({ text, startIndex, shimmer }) {
 }
 
 export default function Hero() {
+  // Headline lines are CMS-editable (the page's H1); the trailing ' ' line
+  // keeps the original shimmer slot.
+  const LINES = [...HOME_TEXT.heroLines, ' '];
   const canvasRef = useRef(null);
   const contentRef = useRef(null);
   const controlRef = useRef(null);
@@ -104,15 +107,13 @@ export default function Hero() {
         <p className="hero-eyebrow">Cairo · Egypt</p>
 
         <h1 className="hero-title" style={{ perspective: 600 }}>
-          <SplitLine text={LINES[0]} startIndex={0} />
-          <SplitLine text={LINES[1]} startIndex={LINES[0].length} />
+          {/* {' '} keeps a real space between lines for search engines / screen readers */}
+          <SplitLine text={LINES[0]} startIndex={0} />{' '}
+          <SplitLine text={LINES[1]} startIndex={LINES[0].length} />{' '}
           <SplitLine text={LINES[2]} startIndex={LINES[0].length + LINES[1].length} shimmer />
         </h1>
 
-        <p className="hero-sub">
-          Brand activations, events &amp; exhibitions, roadshows, and digital experiences in Egypt —<br />
-          connecting people to what matters.
-        </p>
+        <RichText className="hero-sub" text={HOME_TEXT.heroSub} />
 
         <div className="hero-btns">
           <a ref={btnPRef} href="#portfolio" className="btn-p" onClick={(e) => handleClick(e, '#portfolio')}>View Our Work</a>

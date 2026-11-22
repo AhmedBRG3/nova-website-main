@@ -46,7 +46,7 @@ import Footer from './components/Footer';
 import ProjectDetail from './components/ProjectDetail';
 import { IEIBlock, SMSBlock, FFWBlock, YBEBlock } from './components/story';
 import useSeo from './hooks/useSeo';
-import seo from '../content/seo.json';
+import { SEO_CONTENT as seo } from './data/caseStudies';
 
 function HomePage() {
   const location = useLocation();

@@ -6,7 +6,8 @@
 // ─────────────────────────────────────────
 import useReveal from '../hooks/useReveal';
 import useTilt from '../hooks/useTilt';
-import { ABOUT_CARDS, ABOUT_VALUES } from '../data';
+import { ABOUT_CARDS, ABOUT_VALUES, HOME_TEXT } from '../data';
+import RichText from './RichText';
 
 function TiltCard({ card }) {
   const tiltRef = useTilt({ maxX: 14, maxY: 11 });
@@ -29,11 +30,7 @@ export default function About() {
       <div ref={leftRef} className="rv">
         <p className="section-eyebrow">Who We Are</p>
         <h2 className="section-title">Where Strategy<br />Meets Story.</h2>
-        <p className="section-body">
-          NOVA is a full-service brand experience agency headquartered in Cairo. We combine
-          creative strategy, flawless production, and fearless activation to build brands
-          people remember — and love.
-        </p>
+        <RichText className="section-body" text={HOME_TEXT.aboutBody} />
         <div className="about-values">
           {ABOUT_VALUES.map((v) => (
             <span key={v} className="value-pill">{v}</span>

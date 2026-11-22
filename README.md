@@ -5,6 +5,67 @@ The full React breakdown of the upgraded NOVA landing page — preloader,
 custom cursor, film grain, magnetic buttons, a continuously-interpolated
 services sweep, and four hand-illustrated, living SVG story scenes.
 
+## Content editing, SEO and hosting (GoDaddy cPanel)
+
+Site copy is **not** in the JS bundle. It lives in `public/content/*.json` and is
+edited live on the server through a login-gated admin at **`/admin`**:
+
+| File | Edited in admin as | Used by |
+|------|--------------------|---------|
+| `content/home.json` | Home page text (hero H1, services, about, story blocks, clients, contact) | React + `seo.php` |
+| `content/seo.json`  | Home page SEO (title, meta description, share image) | `seo.php` |
+| `content/work.json` | Case studies (summary, SEO title/description, photo alt text) | React + `seo.php` + `sitemap.php` |
+
+- **Links in text:** rich fields accept `[visible text](url)`. The admin has an *Insert link*
+  button and a live preview. Allowed: `https://…`, `mailto:…`, `tel:…`, `/work/<slug>`, `/#about`,
+  `/#services`, `/#portfolio`, `/#clients`, `/#contact`. Internal links are checked against real pages.
+  Grammar: `public/admin/richtext.php` (PHP) and `src/lib/richText.js` (JS), kept in sync by `npm run test:content`.
+- **SEO router:** `.htaccess` sends every page URL through `seo.php`, which returns `index.html`
+  with that page's title, description, canonical, social tags, JSON-LD and a crawlable text copy
+  (hidden from JS visitors). Unknown URLs return a real 404. `sitemap.xml` is generated live.
+- **Roles:** `admin` can do everything. `mediabuyer` edits text/SEO/alt text and adds case studies,
+  but can't change URLs (slugs) or delete.
+- **Safety:** every save keeps the previous version. *Admin → History → Restore* undoes any change.
+  Changes are logged in `admin/data/audit.log`.
+
+### Local development
+
+```bash
+npm install
+npm run dev            # site + real PHP admin at http://localhost:5173/admin/
+```
+
+`npm run dev` starts PHP's built-in server for `/admin`, `/contact.php` and `/sitemap.xml`
+(requires PHP: `brew install php`). The first run prints local admin logins. They're stored in
+`.dev/admin-data/` and never shipped. **Saving in the local admin edits `public/content/*.json`,**
+so revert those files if you don't want to keep test edits.
+
+### Preview exactly like GoDaddy (Apache + .htaccess)
+
+```bash
+npm run build
+npm run preview:apache     # Docker php:8.2-apache → http://localhost:8090
+npm run test:admin         # 40 end-to-end checks (redirects, 404s, admin, links, restore…)
+npm run preview:apache -- stop
+```
+
+`npm run test:content` checks the PHP and JS link parsers agree.
+
+### Deploy to GoDaddy cPanel
+
+1. In cPanel → *MultiPHP Manager*, set the domain to **PHP 8.1 or newer** (7.4 minimum).
+2. Create the real admin logins (once): `php scripts/make-admin-user.php`. Note the printed
+   passwords. To choose your own: `--mediabuyer=YourLongPassword`.
+3. `npm run package` builds the site and creates two zips in `deploy/`:
+   - `first-install.zip` (**first upload only**) includes `content/`.
+   - `site-update.zip` (**every later redeploy**) has no `content/` and no logins, so the media
+     buyer's live edits are never overwritten.
+4. cPanel → File Manager → `public_html` → Upload the zip → Extract. Then upload
+   `public/admin/data/users.php` to `public_html/admin/data/` (first time, or when passwords change).
+5. If the SSL certificate isn't active yet, delete the 3 "Force HTTPS" lines in `.htaccess`.
+6. Optional live check: `BASE=https://novaadv.com npm run test:admin -- --read-only`.
+7. Submit `https://novaadv.com/sitemap.xml` in Google Search Console.
+
 ## File Structure
 
 ```

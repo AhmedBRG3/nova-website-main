@@ -7,3 +7,10 @@ nova-site-cpanel
 nova-site-cpanel.zip
 *.log
 .env*
+
+public/admin/data/users.php
+public/admin/data/backups
+public/admin/data/audit.log
+public/admin/data/fail-*
+.dev/
+deploy/

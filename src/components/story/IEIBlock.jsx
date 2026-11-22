@@ -9,7 +9,8 @@ import useReveal from '../../hooks/useReveal';
 import useTilt from '../../hooks/useTilt';
 import useScrollEngine from '../../hooks/useScrollEngine';
 import { useRef } from 'react';
-import { IEI_CARDS } from '../../data';
+import { IEI_CARDS, HOME_TEXT } from '../../data';
+import RichText from '../RichText';
 
 const ICONS = {
   compass: <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />,
@@ -33,7 +34,7 @@ function IEICard({ card, delay }) {
       <div>
         <div className="iei-card-label">{card.num}</div>
         <div className="iei-card-title">{card.title}</div>
-        <div className="iei-card-desc">{card.desc}</div>
+        <RichText as="div" className="iei-card-desc" text={card.desc} />
       </div>
     </div>
   );
@@ -75,10 +76,7 @@ export default function IEIBlock() {
               <span className="iei-dot iei-dot-white" style={{ WebkitTextFillColor: 'initial' }} />Impact.
             </div>
           </div>
-          <p className="iei-body">
-            We transform briefs into brand moments that move people — literally and emotionally.
-            Every project begins with vision and ends with results.
-          </p>
+          <RichText className="iei-body" text={HOME_TEXT.ieiBody} />
         </div>
 
         <div className="iei-right">

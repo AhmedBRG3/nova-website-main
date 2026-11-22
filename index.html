@@ -9,6 +9,11 @@
       content="NOVA is a full-service brand experience agency in Cairo, Egypt — brand activations, exhibitions, roadshows, and digital experiences, built in our own factory."
     />
     <meta name="theme-color" content="#0B0906" />
+    <!-- seo.php puts a crawlable text copy of the page in #root > .ssr.
+         Browsers running JS hide it immediately (React renders the real page);
+         crawlers and link previews without JS still read it. -->
+    <script>document.documentElement.classList.add('js')</script>
+    <style>html,body{background:#0B0906;margin:0}.js #root>.ssr{display:none}</style>
     <link rel="canonical" href="https://novaadv.com/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
