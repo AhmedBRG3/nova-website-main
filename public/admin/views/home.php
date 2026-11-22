@@ -58,7 +58,7 @@ function save_home(array $in): array {
             $errors = array_merge($errors, rt_validate($v, $name, $min, $max, $slugs));
         } else {
             if ($type !== 'title' || substr_count($v, "\n") > 1) $v = str_replace("\n", ' ', $v);
-            if (len($v) < $min || len($v) > $max) $errors[] = "$name: must be $min–$max characters (now " . len($v) . ').';
+            if (len($v) < $min || len($v) > $max) $errors[] = "$name: must be $min-$max characters (now " . len($v) . ').';
             if (strpos($v, '](') !== false) $errors[] = "$name: links aren't allowed in this field.";
         }
         path_set($home, $path, $v);

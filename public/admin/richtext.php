@@ -74,7 +74,7 @@ function rt_validate(string $s, string $label, int $min, int $max, array $slugs)
     $errors = [];
     $tokens = rt_parse($s);
     $len = mb_strlen(rt_strip($s));
-    if ($len < $min || $len > $max) $errors[] = "$label: visible text must be $min–$max characters (now $len).";
+    if ($len < $min || $len > $max) $errors[] = "$label: visible text must be $min-$max characters (now $len).";
     $links = array_values(array_filter($tokens, fn($t) => $t['type'] === 'link'));
     if (count($links) > RT_MAX_LINKS) $errors[] = "$label: at most " . RT_MAX_LINKS . ' links.';
     foreach ($tokens as $t) {
