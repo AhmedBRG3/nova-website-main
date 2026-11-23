@@ -96,15 +96,21 @@ body.cur-view #cur-label{opacity:1}
 #pbar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--pulse),var(--hot),var(--ember));transform-origin:left;box-shadow:0 0 12px rgba(236,32,39,.5)}
 
 /* ═══ NAV ═══ */
-nav{position:fixed;top:0;left:0;right:0;z-index:800;padding:1.4rem 3rem;display:flex;align-items:center;justify-content:space-between;transition:background .6s,backdrop-filter .6s,padding .6s;opacity:0;transform:translateY(-16px)}
-body.loaded nav{opacity:1;transform:none;transition:opacity .9s var(--e) .9s,transform .9s var(--e) .9s,background .6s,padding .6s}
-nav.sc{background:rgba(10,8,8,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);padding:1rem 3rem;border-bottom:.5px solid rgba(243,234,211,.05)}
+/* Scoped to .site-nav (not the bare nav element) so other <nav> landmarks
+   (page links, related pages) stay in normal flow instead of becoming a
+   second fixed bar over the menu. */
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:800;padding:1.4rem 3rem;display:flex;align-items:center;justify-content:space-between;transition:background .6s,backdrop-filter .6s,padding .6s;opacity:0;transform:translateY(-16px)}
+body.loaded .site-nav{opacity:1;transform:none;transition:opacity .9s var(--e) .9s,transform .9s var(--e) .9s,background .6s,padding .6s}
+.site-nav.sc{background:rgba(10,8,8,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);padding:1rem 3rem;border-bottom:.5px solid rgba(243,234,211,.05)}
 .nav-logo{display:flex;align-items:center;text-decoration:none}
 .nav-links{display:flex;gap:2.5rem;list-style:none}
 .nav-links a{color:var(--silver);text-decoration:none;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;transition:color .3s;position:relative;padding:4px 0}
 .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:var(--hot);transform:scaleX(0);transform-origin:right;transition:transform .45s var(--e)}
 .nav-links a:hover{color:#F3EAD3}
 .nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+.nav-links a[aria-current=page]{color:#F3EAD3}
+.nav-links a[aria-current=page]::after{transform:scaleX(1)}
+.nav-mobile a[aria-current=page]{color:var(--hot)}
 .nav-cta{padding:.55rem 1.6rem;border:1px solid rgba(243,234,211,.2);border-radius:50px;color:#F3EAD3;text-decoration:none;font-size:.76rem;letter-spacing:.08em;transition:background .35s,border-color .35s,box-shadow .35s;display:inline-block}
 .nav-cta:hover{background:var(--pulse);border-color:var(--pulse);box-shadow:0 0 24px rgba(236,32,39,.4)}
 .nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;padding:0;cursor:pointer;z-index:820}
@@ -474,7 +480,6 @@ body.loaded .scroll-ind{opacity:1;transition:opacity 1s ease 2.6s}
 .info-cta{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;padding:2rem 0;margin-bottom:3rem;border-top:1px solid rgba(243,234,211,.08)}
 .info-cta-text{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--light)}
 .info-related{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-.footer-pages{opacity:.85}
 
 /* ═══ CLIENTS ═══ */
 #clients{padding:5rem 0;border-top:1px solid rgba(var(--ink-rgb),.06);border-bottom:1px solid rgba(var(--ink-rgb),.06);overflow:hidden;background:var(--void)}
@@ -585,7 +590,7 @@ body.loaded .wa-float:hover{transform:scale(1.08);transition-delay:0s;box-shadow
   .about-visual{height:auto}
 }
 @media(max-width:768px){
-  nav{padding:1.2rem 1.5rem}.nav-links{display:none}.nav-cta{display:none}.nav-toggle{display:flex}
+  .site-nav{padding:1.2rem 1.5rem}.nav-links{display:none}.nav-cta{display:none}.nav-toggle{display:flex}
   #cur,#cur-ring{display:none}body{cursor:auto}
   .services-sticky-wrapper{height:504vh}
   .hero-btns{flex-direction:column;width:100%;max-width:340px;margin-left:auto;margin-right:auto}

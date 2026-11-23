@@ -49,6 +49,15 @@ export function pageForSection(anchor) {
   return PAGES.find((p) => p.sectionAnchor === anchor && p.enabled);
 }
 
+/**
+ * Where a menu tab for a home section ('#about') should go: the section's
+ * live page ('/about') if it has one, otherwise the section on the home page ('/#about').
+ */
+export function sectionHref(hash) {
+  const page = pageForSection(hash.replace(/^#/, ''));
+  return page ? `/${page.slug}` : `/${hash}`;
+}
+
 async function getJson(url) {
   // no-cache = always revalidate with the server, so admin edits show immediately.
   const res = await fetch(url, { cache: 'no-cache' });

@@ -19,7 +19,8 @@ edited live on the server through a login-gated admin at **`/admin`**:
 
 - **Section pages ("Read more"):** each page is off by default. While off it is a draft: no button on the home page, no URL (404),
   not in the sitemap. The media buyer writes it in *Admin → Section pages* (headings, paragraphs, bullet lists, links), then ticks
-  *Page is live*. Button text must be descriptive ("More about NOVA", not "Read more"). A page that other live content links to
+  *Page is live*. Once About or Services is live, the menu's original *About* / *Services* tab (navbar, mobile menu and
+  footer) opens that page instead of scrolling to the section (`src/hooks/useSectionNav.js`). Button text must be descriptive ("More about NOVA", not "Read more"). A page that other live content links to
   can't be switched off until those links are removed. Starter text ships in `public/defaults/pages.json`; the first save creates
   `content/pages.json`, and both are merged by slug, so a code update can add a page without touching live content.
 - **Edit conflicts:** every editor form remembers the version it opened. If someone else (or another tab) saved in between,

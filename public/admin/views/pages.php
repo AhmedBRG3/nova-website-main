@@ -13,6 +13,16 @@ const BLOCK_TYPES = ['h2' => 'Heading', 'h3' => 'Subheading', 'p' => 'Paragraph'
 const GENERIC_LABELS = ['read more', 'more', 'click here', 'learn more', 'read', 'details', 'see more', 'here', 'more info', 'continue'];
 const MAX_BLOCKS = 40;
 const THIN_WORDS = 300;
+// Menu tabs (keep in sync with NAV_LINKS in src/data/index.js). When a live page's
+// sectionAnchor matches one, that tab in the navbar/footer opens the page instead of scrolling.
+const MENU_TABS = ['about' => 'About', 'services' => 'Services', 'portfolio' => 'Portfolio', 'contact' => 'Contact'];
+
+/** Where a live page is linked from on the site, e.g. 'button in “About” + “About” menu tab'. */
+function page_entry_points(array $p): string {
+    $where = 'button in “' . ($p['section'] ?? '') . '”';
+    $tab = MENU_TABS[$p['sectionAnchor'] ?? ''] ?? null;
+    return $tab ? $where . ' + “' . $tab . '” menu tab' : $where;
+}
 
 function find_page(array $pages, string $slug): ?array {
     foreach ($pages as $p) if ($p['slug'] === $slug) return $p;
@@ -113,11 +123,12 @@ function save_page(array $in): array {
 
 function view_pages_list(): string {
     $b = '<div class="card"><h2>Section pages</h2><p class="hint">Full pages opened by the home page\'s buttons. '
+       . 'When About or Services is live, its menu tab opens the page too. '
        . 'A page stays hidden (no button, no URL, not in Google) until you switch it on. Aim for at least ' . THIN_WORDS . ' words of original text — '
        . 'pages that only repeat the home page rank poorly.</p><table><tr><th>Page</th><th>Status</th><th>Words</th><th></th></tr>';
     foreach (load_pages() as $p) {
         $w = page_words($p);
-        $b .= '<tr><td><strong>' . e($p['title']) . '</strong><br><span class="hint">/' . e($p['slug']) . ' · button in “' . e($p['section']) . '”</span></td>'
+        $b .= '<tr><td><strong>' . e($p['title']) . '</strong><br><span class="hint">/' . e($p['slug']) . ' · ' . e(page_entry_points($p)) . '</span></td>'
             . '<td>' . (!empty($p['enabled']) ? '<span style="color:#1e7d3a">● Live</span>' : '<span class="hint">○ Hidden (draft)</span>') . '</td>'
             . '<td' . ($w < THIN_WORDS ? ' class="bad"' : '') . '>' . $w . '</td>'
             . '<td><a href="/admin/?view=page&slug=' . urlencode($p['slug']) . '">Edit</a>'
@@ -159,7 +170,7 @@ function view_page_edit(string $slug, ?array $draft): string {
        . '<form method="post" id="page-form">' . csrf_field() . version_field('pages.json')
        . '<input type="hidden" name="action" value="save_page"><input type="hidden" name="slug" value="' . e($slug) . '">'
        . '<label style="display:flex;gap:8px;align-items:center;font-size:16px"><input type="checkbox" name="enabled" value="1"' . (!empty($p['enabled']) ? ' checked' : '') . '> '
-       . 'Page is live (shows the button on the home page and publishes /' . e($slug) . ')</label>'
+       . 'Page is live (publishes /' . e($slug) . ' and links it from the ' . e(page_entry_points($saved)) . ')</label>'
        . '<div class="hint">' . $w . ' words' . ($w < THIN_WORDS ? ' — <span class="bad">pages under ' . THIN_WORDS . ' words of original text may rank poorly.</span>' : '') . '</div>'
        . plain_field('eyebrow', 'Small label above the title', (string)($p['eyebrow'] ?? ''), 0, 40)
        . plain_field('title', 'Page title (H1)', (string)($p['title'] ?? ''), 3, 80)

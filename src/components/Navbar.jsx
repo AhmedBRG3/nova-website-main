@@ -6,14 +6,16 @@
 //  GlobalStyles (see App.jsx for where that
 //  class gets added) — turns to frosted glass
 //  past 60px of scroll, has a magnetic CTA.
-//  Nav links smooth-scroll when already on the
-//  home page; from a case-study page they route
-//  back to "/" and land on that section instead.
+//  Tabs (see useSectionNav): About / Services open
+//  their full page once it is live in the admin;
+//  otherwise they smooth-scroll to the section on
+//  the home page (or route back to "/#section").
 // ─────────────────────────────────────────
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import useScrollEngine from '../hooks/useScrollEngine';
 import useMagnet from '../hooks/useMagnet';
+import useSectionNav from '../hooks/useSectionNav';
 import NovaLogo from './NovaLogo';
 import { NAV_LINKS } from '../data';
 
@@ -21,8 +23,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const ctaRef = useMagnet();
-  const navigate = useNavigate();
   const location = useLocation();
+  const nav = useSectionNav(() => setMenuOpen(false));
 
   useScrollEngine(({ sy }) => setScrolled(sy > 60));
 
@@ -38,19 +40,9 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
-  const handleClick = (e, href) => {
-    e.preventDefault();
-    setMenuOpen(false);
-    if (location.pathname !== '/') {
-      navigate(`/${href}`);
-      return;
-    }
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <>
-      <nav aria-label="Main navigation" className={scrolled ? 'sc' : ''}>
+      <nav aria-label="Main navigation" className={`site-nav${scrolled ? ' sc' : ''}`}>
         <Link to="/" aria-label="NOVA Home" className="nav-logo">
           <NovaLogo height={38} />
         </Link>
@@ -58,7 +50,7 @@ export default function Navbar() {
         <ul className="nav-links">
           {NAV_LINKS.map(({ label, href }) => (
             <li key={href}>
-              <a href={href} onClick={(e) => handleClick(e, href)}>
+              <a href={nav.href(href)} onClick={(e) => nav.go(e, href)} aria-current={nav.current(href)}>
                 {label}
               </a>
             </li>
@@ -67,8 +59,8 @@ export default function Navbar() {
 
         <a
           ref={ctaRef}
-          href="#contact"
-          onClick={(e) => handleClick(e, '#contact')}
+          href="/#contact"
+          onClick={(e) => nav.go(e, '#contact')}
           className="nav-cta"
         >
           Start a Project
@@ -94,13 +86,13 @@ export default function Navbar() {
         <ul>
           {NAV_LINKS.map(({ label, href }) => (
             <li key={href}>
-              <a href={href} onClick={(e) => handleClick(e, href)}>
+              <a href={nav.href(href)} onClick={(e) => nav.go(e, href)} aria-current={nav.current(href)}>
                 {label}
               </a>
             </li>
           ))}
         </ul>
-        <a href="#contact" onClick={(e) => handleClick(e, '#contact')} className="nav-mobile-cta">
+        <a href="/#contact" onClick={(e) => nav.go(e, '#contact')} className="nav-mobile-cta">
           Start a Project
         </a>
       </div>
