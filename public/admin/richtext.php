@@ -5,21 +5,22 @@
 //
 //      [visible text](url)
 //
-//  Allowed urls: https://… http://… mailto:… tel:… / /work/<slug> #anchor /#anchor
+//  Allowed urls: https://… http://… mailto:… tel:… / /work/<slug> /<page> #anchor /#anchor
 //  The JS twin is src/lib/richText.js; tests/rich-text-cases.json
 //  is run against both (npm run test:content) so they never drift.
 // ─────────────────────────────────────────
 
 // URL part = printable ASCII except spaces and parentheses (same class in JS).
 const RT_LINK_RE = '/\[([^\[\]\n]+)\]\(([\x21-\x27\x2A-\x7E]+)\)/u';
-const RT_ANCHORS = ['about', 'services', 'portfolio', 'clients', 'contact'];
+// Home-page section ids that links may jump to (keep in sync with the components).
+const RT_ANCHORS = ['about', 'services', 'portfolio', 'clients', 'contact', 'philosophy', 'how-we-think', 'brand-reach'];
 const RT_MAX_LINKS = 10;
 
 function rt_kind(string $href): string {
     if (preg_match('~^https?://[A-Za-z0-9.-]+\.[A-Za-z]{2,}(:[0-9]{1,5})?([/?#][A-Za-z0-9\-._\x7E:/?#\[\]@!$&\'*+,;=%]*)?$~', $href)) return 'external';
     if (preg_match('~^mailto:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$~', $href)) return 'mailto';
     if (preg_match('~^tel:\+?[0-9][0-9.-]{4,20}$~', $href)) return 'tel';
-    if (preg_match('~^(/(work/[a-z0-9-]+)?(#[a-z0-9-]+)?|#[a-z0-9-]+)$~', $href)) return 'internal';
+    if (preg_match('~^(/((work/)?[a-z0-9-]+)?(#[a-z0-9-]+)?|#[a-z0-9-]+)$~', $href)) return 'internal';
     return 'invalid';
 }
 
@@ -67,10 +68,11 @@ function rt_to_html(string $s): string {
 }
 
 /**
- * Validate a rich field. $slugs = existing case-study slugs (for internal links).
+ * Validate a rich field. $slugs = existing case-study slugs, $pageSlugs = section
+ * pages that are switched on (only those are valid link targets).
  * Returns a list of human-readable errors (empty = OK).
  */
-function rt_validate(string $s, string $label, int $min, int $max, array $slugs): array {
+function rt_validate(string $s, string $label, int $min, int $max, array $slugs, array $pageSlugs = []): array {
     $errors = [];
     $tokens = rt_parse($s);
     $len = mb_strlen(rt_strip($s));
@@ -95,9 +97,12 @@ function rt_validate(string $s, string $label, int $min, int $max, array $slugs)
             if ($path === false || $path === '') $path = '/';
             if ($path === '/' && $hash !== '' && !in_array($hash, RT_ANCHORS, true)) {
                 $errors[] = "$label: \"#$hash\" is not a section on the home page. Use one of: #" . implode(', #', RT_ANCHORS) . '.';
+            } elseif (strncmp($path, '/work/', 6) === 0) {
+                if (!in_array(substr($path, 6), $slugs, true)) $errors[] = "$label: \"{$l['href']}\" doesn't match any case study.";
             } elseif ($path !== '/') {
-                $slug = substr($path, strlen('/work/'));
-                if (!in_array($slug, $slugs, true)) $errors[] = "$label: \"{$l['href']}\" doesn't match any case study.";
+                $page = substr($path, 1);
+                if ($hash !== '') $errors[] = "$label: links to a page can't include a #section (\"{$l['href']}\").";
+                elseif (!in_array($page, $pageSlugs, true)) $errors[] = "$label: \"/$page\" is not a live page on this site. Section pages must be switched on before you can link to them.";
             }
         }
     }

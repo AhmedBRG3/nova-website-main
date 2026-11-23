@@ -208,5 +208,63 @@
         "text": " text"
       }
     ]
+  },
+  {
+    "in": "Read [about NOVA](/about) and [steps](/how-we-think)",
+    "out": [
+      {
+        "type": "text",
+        "text": "Read "
+      },
+      {
+        "type": "link",
+        "text": "about NOVA",
+        "href": "/about",
+        "kind": "internal"
+      },
+      {
+        "type": "text",
+        "text": " and "
+      },
+      {
+        "type": "link",
+        "text": "steps",
+        "href": "/how-we-think",
+        "kind": "internal"
+      }
+    ]
+  },
+  {
+    "in": "[jump](/#brand-reach)",
+    "out": [
+      {
+        "type": "link",
+        "text": "jump",
+        "href": "/#brand-reach",
+        "kind": "internal"
+      }
+    ]
+  },
+  {
+    "in": "[x](/About)",
+    "out": [
+      {
+        "type": "link",
+        "text": "x",
+        "href": "/About",
+        "kind": "invalid"
+      }
+    ]
+  },
+  {
+    "in": "[x](/a/b)",
+    "out": [
+      {
+        "type": "link",
+        "text": "x",
+        "href": "/a/b",
+        "kind": "invalid"
+      }
+    ]
   }
 ]

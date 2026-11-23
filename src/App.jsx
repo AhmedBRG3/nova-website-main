@@ -44,6 +44,8 @@ import Clients from './components/Clients';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ProjectDetail from './components/ProjectDetail';
+import InfoPage from './components/InfoPage';
+import NotFound from './components/NotFound';
 import { IEIBlock, SMSBlock, FFWBlock, YBEBlock } from './components/story';
 import useSeo from './hooks/useSeo';
 import { SEO_CONTENT as seo } from './data/caseStudies';
@@ -110,6 +112,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/work/:slug" element={<ProjectDetail />} />
+          {/* Section pages opened by the home page's Read-more buttons (/about, /services, …) */}
+          <Route path="/:pageSlug" element={<InfoPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 

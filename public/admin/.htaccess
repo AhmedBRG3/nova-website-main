@@ -8,6 +8,6 @@ DirectoryIndex index.php
 </IfModule>
 
 # Helpers are only ever included by index.php.
-<FilesMatch "^(lib|richtext)\.php$">
+<FilesMatch "^(lib|richtext|shared)\.php$">
   Require all denied
 </FilesMatch>

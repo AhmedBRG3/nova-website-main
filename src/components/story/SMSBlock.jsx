@@ -11,6 +11,7 @@ import useScrollEngine from '../../hooks/useScrollEngine';
 import IcosahedronCanvas from '../IcosahedronCanvas';
 import { SMS_STEPS, HOME_TEXT } from '../../data';
 import RichText from '../RichText';
+import ReadMore from '../ReadMore';
 
 export default function SMSBlock() {
   const blockRef = useRef(null);
@@ -39,7 +40,7 @@ export default function SMSBlock() {
   });
 
   return (
-    <div className="sms-block" ref={blockRef}>
+    <div id="how-we-think" className="sms-block" ref={blockRef}>
       <IcosahedronCanvas />
       <div className="sms-orb sms-orb1" ref={orb1Ref} />
       <div className="sms-orb sms-orb2" ref={orb2Ref} />
@@ -54,6 +55,7 @@ export default function SMSBlock() {
             <span className="sms-h-italic shimmer accent-serif">Story.</span>
           </h2>
           <RichText className="sms-sub" text={HOME_TEXT.smsSub} />
+          <ReadMore section="how-we-think" />
           <div className="sms-quote">
             <div className="sms-quote-bar" />
             <p className="sms-quote-text">"We don't sell space. We architect emotion."</p>

@@ -8,6 +8,7 @@ import useReveal from '../hooks/useReveal';
 import useTilt from '../hooks/useTilt';
 import { ABOUT_CARDS, ABOUT_VALUES, HOME_TEXT } from '../data';
 import RichText from './RichText';
+import ReadMore from './ReadMore';
 
 function TiltCard({ card }) {
   const tiltRef = useTilt({ maxX: 14, maxY: 11 });
@@ -36,6 +37,7 @@ export default function About() {
             <span key={v} className="value-pill">{v}</span>
           ))}
         </div>
+        <ReadMore section="about" />
       </div>
 
       <div className="about-visual">

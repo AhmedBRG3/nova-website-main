@@ -11,6 +11,7 @@ import useScrollEngine from '../../hooks/useScrollEngine';
 import { useRef } from 'react';
 import { IEI_CARDS, HOME_TEXT } from '../../data';
 import RichText from '../RichText';
+import ReadMore from '../ReadMore';
 
 const ICONS = {
   compass: <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />,
@@ -57,7 +58,7 @@ export default function IEIBlock() {
   });
 
   return (
-    <div className="iei-block light-section" ref={blockRef}>
+    <div id="philosophy" className="iei-block light-section" ref={blockRef}>
       <div className="iei-orb iei-orb1" ref={orb1Ref} />
       <div className="iei-orb iei-orb2" ref={orb2Ref} />
       <div className="iei-grid" />
@@ -77,6 +78,7 @@ export default function IEIBlock() {
             </div>
           </div>
           <RichText className="iei-body" text={HOME_TEXT.ieiBody} />
+          <ReadMore section="philosophy" />
         </div>
 
         <div className="iei-right">

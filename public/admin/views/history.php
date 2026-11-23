@@ -2,7 +2,7 @@
 // Version history: every save keeps the previous file; restore is one click.
 if (!defined('NOVA_ADMIN')) { http_response_code(404); exit; }
 
-const FILE_LABELS = ['home.json' => 'Home page text', 'seo.json' => 'Home page SEO', 'work.json' => 'Case studies'];
+const FILE_LABELS = ['home.json' => 'Home page text', 'pages.json' => 'Section pages', 'seo.json' => 'Home page SEO', 'work.json' => 'Case studies'];
 
 function restore_backup(string $name): ?string {
     foreach (list_backups() as $bk) {

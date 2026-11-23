@@ -459,6 +459,22 @@ body.loaded .scroll-ind{opacity:1;transition:opacity 1s ease 2.6s}
 .case-study-nav-link span{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--hot)}
 .case-study-nav-link strong{font-family:'Playfair Display',serif;font-weight:400;font-size:1.1rem;color:var(--light)}
 .case-study-nav-next{text-align:right;align-items:flex-end}
+/* ═══ SECTION PAGES (InfoPage) + Read-more buttons ═══ */
+.read-more{margin-top:2rem}
+.ybe-headline .read-more,.ffw-headline .read-more{margin-top:1.75rem}
+.info-page .case-study-title:focus{outline:none}
+.info-page .case-study-title:focus-visible{outline:2px solid var(--hot);outline-offset:6px}
+.info-body{max-width:720px;margin-bottom:4rem}
+.info-h2{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(1.5rem,2.6vw,2rem);line-height:1.2;color:var(--light);margin:3rem 0 1rem}
+.info-h3{font-size:1.1rem;font-weight:500;color:var(--mist);margin:2rem 0 .75rem}
+.info-p{font-size:1.05rem;line-height:1.85;color:var(--silver);font-weight:300;margin:0 0 1.25rem}
+.info-list{list-style-type:disc;padding-left:1.4rem;margin:0 0 1.5rem;color:var(--silver);font-size:1.02rem;line-height:1.8;font-weight:300}
+.info-list li{margin-bottom:.5rem}
+.info-list li::marker{color:var(--pulse)}
+.info-cta{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;padding:2rem 0;margin-bottom:3rem;border-top:1px solid rgba(243,234,211,.08)}
+.info-cta-text{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--light)}
+.info-related{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.footer-pages{opacity:.85}
 
 /* ═══ CLIENTS ═══ */
 #clients{padding:5rem 0;border-top:1px solid rgba(var(--ink-rgb),.06);border-bottom:1px solid rgba(var(--ink-rgb),.06);overflow:hidden;background:var(--void)}

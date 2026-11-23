@@ -10,6 +10,7 @@
 //  Works on PHP 7.4+.
 // ─────────────────────────────────────────
 require __DIR__ . '/admin/richtext.php';
+require __DIR__ . '/admin/shared.php';
 
 $site = 'https://novaadv.com';
 $html = @file_get_contents(__DIR__ . '/index.html');
@@ -19,6 +20,7 @@ $load = function ($f) { return json_decode((string)@file_get_contents(__DIR__ . 
 $seo  = $load('seo.json');
 $work = $load('work.json');
 $home = $load('home.json');
+$pages = nova_enabled_pages(__DIR__);
 $e = function ($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); };
 $rich = function ($s) { return rt_to_html((string)$s); };
 
@@ -67,6 +69,11 @@ if ($path === '/') {
         foreach ($work as $c) $body .= '<li><a href="/work/' . $e($c['slug']) . '">' . $e($c['project']) . ' — ' . $e($c['client']) . '</a></li>';
         $body .= '</ul></section>';
     }
+    if ($pages) {
+        $body .= '<nav><h2>More from NOVA</h2><ul>';
+        foreach ($pages as $p) $body .= '<li><a href="/' . $e($p['slug']) . '">' . $e($p['readMoreLabel'] ?? $p['title']) . '</a></li>';
+        $body .= '</ul></nav>';
+    }
     if (!empty($home['contact']['body'])) $body .= '<h2>Contact</h2><p>' . $rich($home['contact']['body']) . '</p>';
 } elseif (preg_match('#^/work/([a-z0-9-]+)$#', $path, $m)) {
     $cs = null;
@@ -94,6 +101,31 @@ if ($path === '/') {
     } else {
         $status = 404; $title = 'Project not found | NOVA'; $desc = $seo['workDefaultDescription'] ?? '';
     }
+} elseif (preg_match('#^/([a-z0-9-]+)$#', $path, $m) && ($pg = current(array_filter($pages, function ($p) use ($m) { return $p['slug'] === $m[1]; })))) {
+    // Section page (/about, /services, …) — only reachable while switched on.
+    $title = $pg['seoTitle'] ?? $pg['title'];
+    $desc  = $pg['seoDescription'] ?? '';
+    $ld[] = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $site . '/'],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => $pg['title'], 'item' => $site . $path]]];
+    $ld[] = ['@context' => 'https://schema.org', '@type' => $pg['slug'] === 'about' ? 'AboutPage' : 'WebPage',
+             'name' => $pg['title'], 'description' => $desc, 'url' => $site . $path,
+             'isPartOf' => ['@type' => 'WebSite', 'name' => 'NOVA Marketing & Events', 'url' => $site . '/']];
+    $body = '<article><p><a href="/#' . $e($pg['sectionAnchor'] ?? '') . '">Back to ' . $e($pg['section'] ?? 'home') . '</a></p>'
+          . (!empty($pg['eyebrow']) ? '<p>' . $e($pg['eyebrow']) . '</p>' : '') . '<h1>' . $e($pg['title']) . '</h1>';
+    foreach ($pg['blocks'] ?? [] as $bl) {
+        $t = $bl['type'] ?? 'p';
+        if ($t === 'h2' || $t === 'h3') $body .= "<$t>" . $e($bl['text'] ?? '') . "</$t>";
+        elseif ($t === 'list') $body .= '<ul>' . implode('', array_map(function ($i) use ($rich) { return '<li>' . $rich($i) . '</li>'; }, $bl['items'] ?? [])) . '</ul>';
+        else $body .= '<p>' . $rich($bl['text'] ?? '') . '</p>';
+    }
+    $others = array_filter($pages, function ($p) use ($pg) { return $p['slug'] !== $pg['slug']; });
+    if ($others) {
+        $body .= '<nav><h2>More from NOVA</h2><ul>';
+        foreach ($others as $p) $body .= '<li><a href="/' . $e($p['slug']) . '">' . $e($p['title']) . '</a></li>';
+        $body .= '</ul></nav>';
+    }
+    $body .= '<p><a href="/#contact">Start a project</a></p></article>';
 } else {
     $status = 404; $title = 'Page not found | NOVA'; $desc = '';
 }

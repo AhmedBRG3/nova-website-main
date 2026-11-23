@@ -16,6 +16,7 @@ import useScrollEngine from '../hooks/useScrollEngine';
 import IcosahedronCanvas from './IcosahedronCanvas';
 import { SERVICES } from '../data';
 import RichText from './RichText';
+import ReadMore from './ReadMore';
 
 const ICONS = {
   home:          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>,
@@ -132,6 +133,7 @@ export default function Services() {
               </div>
               <div className="svc-bar"><div className="svc-bar-fill" ref={barFillRef} /></div>
             </div>
+            <ReadMore section="services" />
           </div>
 
           {/* RIGHT — the card stage itself */}

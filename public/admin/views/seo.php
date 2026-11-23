@@ -10,6 +10,7 @@ function save_seo(array $in): array {
     if (len($d) < 70 || len($d) > 160) $errors[] = 'Description must be 70–160 characters.';
     if (!preg_match('#^/[\w./-]+\.(jpg|jpeg|png|webp)$#i', $img) || !is_file(ROOT . $img)) $errors[] = 'Share image must be an existing image path like /og-image.jpg.';
     if (len($wd) > 160) $errors[] = 'Default work description: max 160 characters.';
+    if ($v = version_error('seo.json', $in['base_version'] ?? null)) $errors[] = $v;
     if (!$errors) {
         write_content('seo.json', ['home' => ['title' => $t, 'description' => $d, 'ogImage' => $img], 'workDefaultDescription' => $wd]);
         audit('saved home SEO');
@@ -21,7 +22,7 @@ function view_seo(array $post): string {
     $s = read_content('seo.json'); $h = $s['home'] ?? [];
     $v = function ($k, $def) use ($post) { return $post[$k] ?? $def; };
     return '<div class="card"><h2>Home page SEO</h2><p class="hint">What Google shows in search results and what WhatsApp/LinkedIn show when the link is shared.</p>'
-        . '<form method="post">' . csrf_field() . '<input type="hidden" name="action" value="save_seo">'
+        . '<form method="post">' . csrf_field() . version_field('seo.json') . '<input type="hidden" name="action" value="save_seo">'
         . plain_field('title', 'Title', $v('title', $h['title'] ?? ''), 30, 70, 'Put the main keyword first, e.g. "Brand Activations & Exhibitions in Cairo | NOVA".')
         . plain_field('description', 'Meta description', $v('description', $h['description'] ?? ''), 70, 160, 'One or two sentences that make people click. Plain text, no links.', 3)
         . plain_field('ogImage', 'Social share image path', $v('ogImage', $h['ogImage'] ?? '/og-image.jpg'), 5, 120, '1200×630 image already on the server, e.g. /og-image.jpg')

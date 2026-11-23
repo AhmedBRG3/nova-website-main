@@ -12,6 +12,7 @@ import useReveal from '../../hooks/useReveal';
 import useScrollEngine from '../../hooks/useScrollEngine';
 import { YBE_CARDS, HOME_TEXT } from '../../data';
 import RichText from '../RichText';
+import ReadMore from '../ReadMore';
 import { ROADSHOW_SVG, RETAIL_SVG, TOLL_SVG, INSTORE_SVG } from './illustrations';
 
 const SCENES = {
@@ -79,7 +80,7 @@ export default function YBEBlock() {
   });
 
   return (
-    <div className="ybe-block" ref={blockRef}>
+    <div id="brand-reach" className="ybe-block" ref={blockRef}>
       <div className="ybe-orb ybe-orb1" ref={orb1Ref} />
       <div className="ybe-orb ybe-orb2" ref={orb2Ref} />
       <div className="story-deco" ref={decoRef} style={{ fontSize: '28vw' }}>04</div>
@@ -89,6 +90,7 @@ export default function YBEBlock() {
           <p className="ybe-eyebrow">Brand Reach</p>
           <h2 className="ybe-h">Your brand,<br /><em className="ybe-h-em shimmer accent-serif">everywhere</em> at once.</h2>
           <RichText className="ybe-sub" text={HOME_TEXT.ybeSub} />
+          <ReadMore section="brand-reach" />
         </div>
 
         <div className="ybe-grid">

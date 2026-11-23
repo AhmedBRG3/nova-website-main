@@ -15,6 +15,15 @@ edited live on the server through a login-gated admin at **`/admin`**:
 | `content/home.json` | Home page text (hero H1, services, about, story blocks, clients, contact) | React + `seo.php` |
 | `content/seo.json`  | Home page SEO (title, meta description, share image) | `seo.php` |
 | `content/work.json` | Case studies (summary, SEO title/description, photo alt text) | React + `seo.php` + `sitemap.php` |
+| `content/pages.json` | Section pages: the full pages behind the home page's buttons (`/about`, `/services`, `/philosophy`, `/how-we-think`, `/brand-reach`) | React + `seo.php` + `sitemap.php` |
+
+- **Section pages ("Read more"):** each page is off by default. While off it is a draft: no button on the home page, no URL (404),
+  not in the sitemap. The media buyer writes it in *Admin → Section pages* (headings, paragraphs, bullet lists, links), then ticks
+  *Page is live*. Button text must be descriptive ("More about NOVA", not "Read more"). A page that other live content links to
+  can't be switched off until those links are removed. Starter text ships in `public/defaults/pages.json`; the first save creates
+  `content/pages.json`, and both are merged by slug, so a code update can add a page without touching live content.
+- **Edit conflicts:** every editor form remembers the version it opened. If someone else (or another tab) saved in between,
+  the save is refused instead of overwriting their work.
 
 - **Links in text:** rich fields accept `[visible text](url)`. The admin has an *Insert link*
   button and a live preview. Allowed: `https://…`, `mailto:…`, `tel:…`, `/work/<slug>`, `/#about`,

@@ -1,0 +1,255 @@
+[
+  {
+    "slug": "about",
+    "section": "About",
+    "sectionAnchor": "about",
+    "enabled": false,
+    "eyebrow": "Who We Are",
+    "title": "About NOVA",
+    "readMoreLabel": "More about NOVA",
+    "seoTitle": "About NOVA | Brand Experience Agency in Cairo, Egypt",
+    "seoDescription": "NOVA is a full-service brand experience agency in Cairo — creative strategy, in-house production and activations that people remember.",
+    "blocks": [
+      {
+        "type": "p",
+        "text": "NOVA is a full-service brand experience agency headquartered in Cairo. We combine creative strategy, flawless production, and fearless activation to build brands people remember — and love."
+      },
+      {
+        "type": "h2",
+        "text": "What we stand for"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Honesty",
+          "Fast Delivery",
+          "High Quality",
+          "Low Cost",
+          "Full-Service Team",
+          "Multinational Partners"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "At a glance"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Founded: Homegrown — Rooted in Cairo, Egypt",
+          "HQ: Cairo — Zahraa El Maadi, Egypt",
+          "Factory: In-House — Zero outsourcing",
+          "Team: Full Crew — A multidisciplinary team"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "services",
+    "section": "Services",
+    "sectionAnchor": "services",
+    "enabled": false,
+    "eyebrow": "What We Do",
+    "title": "Our Services",
+    "readMoreLabel": "Explore all our services",
+    "seoTitle": "Services | Events, Activations & Exhibitions in Egypt | NOVA",
+    "seoDescription": "Events and exhibitions, brand activations, nationwide roadshows, digital experiences, in-house production, retail and digital marketing in Egypt.",
+    "blocks": [
+      {
+        "type": "h2",
+        "text": "Events & Exhibitions"
+      },
+      {
+        "type": "p",
+        "text": "We turn ideas into unforgettable events, exhibitions, and large-scale experiences that stay with audiences long after the lights go down."
+      },
+      {
+        "type": "h2",
+        "text": "Brand Activations"
+      },
+      {
+        "type": "p",
+        "text": "Bold activations that surprise, engage, and connect your brand with real people — creating memories, not just impressions."
+      },
+      {
+        "type": "h2",
+        "text": "Nationwide Roadshows"
+      },
+      {
+        "type": "p",
+        "text": "Roadshows that travel nationwide, bringing your brand alive across every destination — from Cairo to the coast."
+      },
+      {
+        "type": "h2",
+        "text": "Digital Experiences"
+      },
+      {
+        "type": "p",
+        "text": "Interactive games, leaderboards, and immersive screens that captivate audiences and turn passive viewers into active participants."
+      },
+      {
+        "type": "h2",
+        "text": "In-House Production"
+      },
+      {
+        "type": "p",
+        "text": "Crafted with precision from our own factory — booths, stands, counters, and custom builds delivered on time, every time."
+      },
+      {
+        "type": "h2",
+        "text": "Retail & Outdoor"
+      },
+      {
+        "type": "p",
+        "text": "From toll stations to in-store demos, we connect shoppers everywhere they go — at the exact moment that matters most."
+      },
+      {
+        "type": "h2",
+        "text": "Digital Marketing"
+      },
+      {
+        "type": "p",
+        "text": "Social media, paid campaigns, content, and performance marketing that extend your brand beyond the venue — and keep the conversation going online."
+      }
+    ]
+  },
+  {
+    "slug": "philosophy",
+    "section": "Our Philosophy",
+    "sectionAnchor": "philosophy",
+    "enabled": false,
+    "eyebrow": "Our Philosophy",
+    "title": "Imagination. Energy. Impact.",
+    "readMoreLabel": "Our philosophy in full",
+    "seoTitle": "Our Philosophy: Imagination, Energy, Impact | NOVA",
+    "seoDescription": "We transform briefs into brand moments that move people. Imagination, energy and impact — the three ideas behind every NOVA project.",
+    "blocks": [
+      {
+        "type": "p",
+        "text": "We transform briefs into brand moments that move people — literally and emotionally. Every project begins with vision and ends with results."
+      },
+      {
+        "type": "h2",
+        "text": "Imagination"
+      },
+      {
+        "type": "p",
+        "text": "Every campaign starts with a question no one has asked yet. We dream before we plan."
+      },
+      {
+        "type": "h2",
+        "text": "Energy"
+      },
+      {
+        "type": "p",
+        "text": "A full in-house team and factory, and a relentless drive to build what others can't."
+      },
+      {
+        "type": "h2",
+        "text": "Impact"
+      },
+      {
+        "type": "p",
+        "text": "Brands don't just reach people — they move them."
+      }
+    ]
+  },
+  {
+    "slug": "how-we-think",
+    "section": "How We Think",
+    "sectionAnchor": "how-we-think",
+    "enabled": false,
+    "eyebrow": "How We Think",
+    "title": "Strategy Meets Story",
+    "readMoreLabel": "How we work, step by step",
+    "seoTitle": "How We Work: From Brief to Live Activation | NOVA",
+    "seoDescription": "NOVA's four-step process: brief and discovery, creative strategy, experience design, then live execution and measuring what moved people.",
+    "blocks": [
+      {
+        "type": "p",
+        "text": "Every campaign we build begins with a single question: what feeling do you want people to carry home?"
+      },
+      {
+        "type": "h2",
+        "text": "01 — Brief & Discovery"
+      },
+      {
+        "type": "p",
+        "text": "We listen harder than anyone else in the room. Goals, audience, tension — we map it all before a single concept is drawn."
+      },
+      {
+        "type": "h2",
+        "text": "02 — Creative Strategy"
+      },
+      {
+        "type": "p",
+        "text": "Data meets intuition. We find the insight that makes your brand impossible to ignore — then build the story around it."
+      },
+      {
+        "type": "h2",
+        "text": "03 — Experience Design"
+      },
+      {
+        "type": "p",
+        "text": "From a napkin sketch to a full activation floor — every detail is designed to make people feel something real."
+      },
+      {
+        "type": "h2",
+        "text": "04 — Live & Measure"
+      },
+      {
+        "type": "p",
+        "text": "We execute flawlessly, then track what moved — because a great story is only great if people remember it tomorrow."
+      }
+    ]
+  },
+  {
+    "slug": "brand-reach",
+    "section": "Brand Reach",
+    "sectionAnchor": "brand-reach",
+    "enabled": false,
+    "eyebrow": "Brand Reach",
+    "title": "Your Brand, Everywhere at Once",
+    "readMoreLabel": "Where we can place your brand",
+    "seoTitle": "Brand Reach: Roadshows, Retail & In-Store Activations | NOVA",
+    "seoDescription": "Roadshows, retail activations, toll stations and in-store demos — NOVA places your brand exactly where people are, across Egypt.",
+    "blocks": [
+      {
+        "type": "p",
+        "text": "Roadshows, retail activations, toll stations, in-store demos — we place your brand exactly where people are."
+      },
+      {
+        "type": "h2",
+        "text": "Roadshows"
+      },
+      {
+        "type": "p",
+        "text": "Branded vehicles that travel city to city — turning every street into a stage for your campaign."
+      },
+      {
+        "type": "h2",
+        "text": "Retail Activations"
+      },
+      {
+        "type": "p",
+        "text": "Pop-up activations inside malls and retail parks that pull shoppers in and turn browsers into brand fans."
+      },
+      {
+        "type": "h2",
+        "text": "Toll Stations"
+      },
+      {
+        "type": "p",
+        "text": "Captive audiences at every gate — branded gantries, booth wraps and sampling while they wait."
+      },
+      {
+        "type": "h2",
+        "text": "In-Store Demos"
+      },
+      {
+        "type": "p",
+        "text": "Live demos inside stores — trained brand ambassadors who turn shelf browsers into buyers on the spot."
+      }
+    ]
+  }
+]

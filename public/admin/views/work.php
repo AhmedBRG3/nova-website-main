@@ -16,7 +16,7 @@ function save_work(array $in, bool $isAdmin): array {
     foreach (['client' => 'Client', 'project' => 'Project title', 'tag' => 'Tag'] as $k => $n) {
         if (len($cs[$k]) < 2 || len($cs[$k]) > 160) $errors[] = "$n must be 2–160 characters.";
     }
-    $errors = array_merge($errors, rt_validate($cs['summary'], 'Summary', 20, 600, array_merge(array_column($work, 'slug'), [$slug])));
+    $errors = array_merge($errors, rt_validate($cs['summary'], 'Summary', 20, 600, array_merge(array_column($work, 'slug'), [$slug]), page_slugs()));
     if (len($cs['seoTitle']) < 30 || len($cs['seoTitle']) > 70) $errors[] = 'SEO title must be 30–70 characters.';
     if (len($cs['seoDescription']) < 70 || len($cs['seoDescription']) > 160) $errors[] = 'SEO description must be 70–160 characters.';
     if ($cs['order'] < 1 || $cs['order'] > 999) $errors[] = 'Order must be 1–999.';
@@ -29,6 +29,7 @@ function save_work(array $in, bool $isAdmin): array {
         $cs['photos'][] = ['id' => $id, 'alt' => $alt];
     }
     if (!$cs['photos']) $errors[] = 'Add at least one photo.';
+    if ($ve = version_error('work.json', $in['base_version'] ?? null)) array_unshift($errors, $ve);
     if (!$errors) {
         $found = false;
         foreach ($work as $i => $c) if ($c['slug'] === $orig) { $work[$i] = $cs; $found = true; }
@@ -65,7 +66,7 @@ function view_work_edit(string $slug, ?array $draft, bool $isAdmin): string {
     $cs = $cs ?: ['order' => count($work) + 1, 'slug' => '', 'client' => '', 'project' => '', 'tag' => '', 'summary' => '',
                   'seoTitle' => '', 'seoDescription' => '', 'photos' => []];
     $b = '<div class="card"><h2>' . ($isNew ? 'New case study' : 'Edit: ' . e($cs['project'])) . '</h2><form method="post">' . csrf_field()
-        . '<input type="hidden" name="action" value="save_work"><input type="hidden" name="orig_slug" value="' . e($isNew ? '' : $slug) . '">'
+        . version_field('work.json') . '<input type="hidden" name="action" value="save_work"><input type="hidden" name="orig_slug" value="' . e($isNew ? '' : $slug) . '">'
         . '<label>Order on site (1 = first)</label><input type="number" name="order" min="1" max="999" value="' . (int)$cs['order'] . '">'
         . '<label>URL slug</label><input type="text" name="slug" value="' . e($cs['slug']) . '"' . (!$isNew && !$isAdmin ? ' readonly' : '') . '><div class="hint">'
         . ($isNew ? 'Lowercase letters, numbers and hyphens, e.g. <code>pfizer-congress-booth-2026</code>. It cannot be changed later.'

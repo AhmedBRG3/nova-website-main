@@ -75,11 +75,15 @@ for (const p of ['/admin/data/users.php', '/admin/data/audit.log', '/admin/lib.p
   ok(s === 403 || s === 404, `${p} is not served (${s})`);
 }
 
+const defaults = await req('/defaults/pages.json');
+ok(defaults.status === 200 && JSON.parse(defaults.text).length === 5, '/defaults/pages.json has the 5 section pages');
+
 if (READ_ONLY) finish();
 
 // ── write tests (preview only) ───────────────────────────────
 if (!BASE.includes('localhost') && !BASE.includes('127.0.0.1')) { console.error('Write tests only run against localhost.'); process.exit(1); }
 const snapshot = Object.fromEntries(readdirSync(CONTENT).map((f) => [f, readFileSync(`${CONTENT}/${f}`)]));
+const hadPages = existsSync(`${CONTENT}/pages.json`);
 const pass = { admin: `admin-${Math.random().toString(36).slice(2)}`, mediabuyer: `buyer-${Math.random().toString(36).slice(2)}` };
 execFileSync('php', [`${root}scripts/make-admin-user.php`, `--out=${DATA}/users.php`, `--admin=${pass.admin}`, `--mediabuyer=${pass.mediabuyer}`]);
 const clearThrottle = () => readdirSync(DATA).filter((f) => f.startsWith('fail-')).forEach((f) => rmSync(`${DATA}/${f}`));
@@ -149,6 +153,62 @@ try {
   ok(r.status === 302, 'restore succeeds');
   ok(JSON.parse(readFileSync(`${CONTENT}/home.json`, 'utf8')).hero.sub === JSON.parse(snapshot['home.json']).hero.sub, 'restore brings back the previous text');
 
+  // ── Section pages ("Read more") ──
+  ok((await req('/about')).status === 404, 'hidden section page /about → 404');
+  ok(!(await req('/sitemap.xml')).text.includes('/about<'), 'hidden page not in sitemap');
+  ok(!(await req('/')).text.includes('href="/about"'), 'hidden page not linked from home');
+  const list = await req('/admin/?view=pages');
+  ok((list.text.match(/Hidden \(draft\)/g) || []).length === 5, 'admin lists 5 hidden section pages');
+
+  const pageForm = async (overrides = {}, blocks) => {
+    const html = (await req('/admin/?view=page&slug=about')).text;
+    const f = new URLSearchParams({
+      action: 'save_page', slug: 'about', csrf: csrfOf(html),
+      base_version: (html.match(/name="base_version" value="([^"]+)"/) || [])[1],
+      enabled: '1', eyebrow: 'Who We Are', title: 'About NOVA', readMoreLabel: 'More about NOVA',
+      seoTitle: 'About NOVA | Brand Experience Agency in Cairo, Egypt',
+      seoDescription: 'NOVA is a full-service brand experience agency in Cairo — creative strategy, in-house production and activations people remember.',
+      ...overrides,
+    });
+    for (const [type, text] of blocks) { f.append('block_type[]', type); f.append('block_text[]', text); }
+    return f;
+  };
+  const goodBlocks = [
+    ['h2', 'Who we are'],
+    ['p', `A Cairo agency with its own factory. See the [${cs.client} build](/work/${cs.slug}).`],
+    ['list', 'Honesty\nFast delivery\n[Talk to us](/#contact)'],
+  ];
+  r = await req('/admin/', { method: 'POST', form: await pageForm({}, [...goodBlocks, ['p', 'See [services](/services).']]) });
+  ok(r.status === 200 && r.text.includes('is not a live page'), 'link to a hidden page is rejected');
+  r = await req('/admin/', { method: 'POST', form: await pageForm({ readMoreLabel: 'Read more →' }, goodBlocks) });
+  ok(r.status === 200 && r.text.includes('must say where it leads'), 'generic "Read more" label is rejected');
+  r = await req('/admin/', { method: 'POST', form: await pageForm({ base_version: 'stale' }, goodBlocks) });
+  ok(r.status === 200 && r.text.includes('Someone saved this content'), 'stale form is refused (edit-conflict guard)');
+  r = await req('/admin/', { method: 'POST', form: await pageForm({ slug: 'not-a-page' }, goodBlocks) });
+  ok(r.status === 200 && r.text.includes('Unknown page'), 'cannot create or rename section pages');
+  r = await req('/admin/', { method: 'POST', form: await pageForm({}, goodBlocks) });
+  ok(r.status === 302, 'About page saved and switched on', r.text.match(/<li>[^<]+/g)?.join(' '));
+
+  const about = await req('/about');
+  ok(about.status === 200 && about.text.includes('<title>About NOVA | Brand Experience Agency'), '/about → 200 with its own title');
+  ok(about.text.includes('<h2>Who we are</h2>') && about.text.includes(`<a href="/work/${cs.slug}">`), '/about crawler HTML has H2 + internal link');
+  ok(about.text.includes('"@type":"AboutPage"') && about.text.includes('BreadcrumbList'), '/about has AboutPage + breadcrumb JSON-LD');
+  ok((await req('/sitemap.xml')).text.includes('/about<'), 'live page is in the sitemap');
+  ok((await req('/')).text.includes('<a href="/about">More about NOVA</a>'), 'home crawler HTML links to the live page');
+  ok((await req('/about/')).location.endsWith('/about'), '/about/ → 301 /about');
+
+  // Home text may now link to /about; then switching About off must be refused.
+  let hf = formFields((await req('/admin/?view=text')).text);
+  r = await req('/admin/', { method: 'POST', form: { ...hf, 'about[body]': `${hf['about[body]']} Read [our story](/about).` } });
+  ok(r.status === 302, 'home text can link to a live section page');
+  r = await req('/admin/', { method: 'POST', form: await pageForm({ enabled: '' }, goodBlocks) });
+  ok(r.status === 200 && r.text.includes("Can&#039;t switch this page off"), 'switching off a page that live content links to is refused');
+  hf = formFields((await req('/admin/?view=text')).text);
+  r = await req('/admin/', { method: 'POST', form: { ...hf, 'about[body]': hf['about[body]'].replace(' Read [our story](/about).', '') } });
+  r = await req('/admin/', { method: 'POST', form: await pageForm({ enabled: '' }, goodBlocks) });
+  ok(r.status === 302 && (await req('/about')).status === 404, 'after removing the link, the page can be hidden again');
+  ok(/__pages\.json"/.test((await req('/admin/?view=history')).text), 'history keeps section-page versions');
+
   // Login throttle (last, it locks this IP for 15 min)
   cookie = '';
   for (let i = 0; i < 5; i++) await req('/admin/', { method: 'POST', form: { action: 'login', user: 'x', pass: 'y' } });
@@ -156,6 +216,7 @@ try {
 } finally {
   clearThrottle();
   for (const [f, buf] of Object.entries(snapshot)) writeFileSync(`${CONTENT}/${f}`, buf);
+  if (!hadPages) rmSync(`${CONTENT}/pages.json`, { force: true });
   if (existsSync(`${DATA}/backups`)) rmSync(`${DATA}/backups`, { recursive: true, force: true });
   console.log(`\nPreview logins were reset for this run: admin / ${pass.admin}   mediabuyer / ${pass.mediabuyer}`);
 }

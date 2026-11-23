@@ -50,12 +50,13 @@ function path_name(string $path): string {
 function save_home(array $in): array {
     $home = read_content('home.json');
     $slugs = case_slugs();
+    $pages = page_slugs();
     $errors = [];
     foreach (home_schema($home) as [$path, $label, $type, $min, $max, $section]) {
         $v = clean_text(path_get($in, $path) ?? '');
         $name = "$section › $label";
         if ($type === 'rich') {
-            $errors = array_merge($errors, rt_validate($v, $name, $min, $max, $slugs));
+            $errors = array_merge($errors, rt_validate($v, $name, $min, $max, $slugs, $pages));
         } else {
             if ($type !== 'title' || substr_count($v, "\n") > 1) $v = str_replace("\n", ' ', $v);
             if (len($v) < $min || len($v) > $max) $errors[] = "$name: must be $min-$max characters (now " . len($v) . ').';
@@ -63,6 +64,7 @@ function save_home(array $in): array {
         }
         path_set($home, $path, $v);
     }
+    if ($ve = version_error('home.json', $in['base_version'] ?? null)) array_unshift($errors, $ve);
     if (!$errors) { write_content('home.json', $home); audit('saved home page text'); }
     return [$errors, $home];
 }
@@ -70,9 +72,9 @@ function save_home(array $in): array {
 function view_home(?array $draft): string {
     $home = $draft ?? read_content('home.json');
     $b = '<div class="card"><h2>Home page text</h2><p class="hint">Changes go live as soon as you save. '
-       . 'Use links to point readers to related case studies (e.g. <code>/work/vyndamax-pfizer</code>) or sections (<code>/#contact</code>). '
+       . 'Use links to point readers to related case studies (e.g. <code>/work/vyndamax-pfizer</code>), section pages that are switched on (e.g. <code>/about</code>) or home sections (<code>/#contact</code>). '
        . 'Good link text describes the destination ("our in-house factory"), not "click here".</p>'
-       . '<form method="post">' . csrf_field() . '<input type="hidden" name="action" value="save_home">';
+       . '<form method="post">' . csrf_field() . version_field('home.json') . '<input type="hidden" name="action" value="save_home">';
     $section = null;
     foreach (home_schema($home) as [$path, $label, $type, $min, $max, $sec]) {
         if ($sec !== $section) { $b .= ($section !== null ? '</fieldset>' : '') . '<fieldset><legend>' . e($sec) . '</legend>'; $section = $sec; }

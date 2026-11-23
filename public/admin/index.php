@@ -16,6 +16,7 @@ require __DIR__ . '/views/seo.php';
 require __DIR__ . '/views/home.php';
 require __DIR__ . '/views/work.php';
 require __DIR__ . '/views/history.php';
+require __DIR__ . '/views/pages.php';
 
 start_session();
 header('X-Frame-Options: DENY');
@@ -70,7 +71,7 @@ if ($action === 'preview') {
     $links = count(array_filter(rt_parse($text), function ($t) { return $t['type'] === 'link'; }));
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['html' => rt_to_html($text), 'links' => $links, 'errors' => $links || strpos($text, '](') !== false
-        ? array_values(array_filter(rt_validate($text, 'Field', $min, $max, case_slugs()), function ($m) { return strpos($m, 'visible text') === false; }))
+        ? array_values(array_filter(rt_validate($text, 'Field', $min, $max, case_slugs(), page_slugs()), function ($m) { return strpos($m, 'visible text') === false; }))
         : []], JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -103,6 +104,12 @@ switch ($action) {
         if (!$isAdmin) { $errors[] = 'Only an admin can delete case studies.'; break; }
         delete_work((string)($_POST['slug'] ?? ''));
         header('Location: /admin/?view=work&done=deleted'); exit;
+    case 'save_page':
+        [$errors, $draft] = save_page($_POST);
+        $slug = (string)($_POST['slug'] ?? '');
+        if (!$errors) { header('Location: /admin/?view=page&slug=' . urlencode($slug) . '&done=1'); exit; }
+        $view = 'page';
+        break;
     case 'restore':
         $err = restore_backup((string)($_POST['name'] ?? ''));
         if ($err === null) { header('Location: /admin/?view=history&done=restored'); exit; }
@@ -116,6 +123,7 @@ if ($notice) {
     $b .= '<div class="ok">' . e($notice);
     if ($view === 'edit' && $slug !== '') $b .= ' <a href="/work/' . e($slug) . '" target="_blank">View page</a>';
     if ($view === 'text' || $view === 'seo') $b .= ' <a href="/" target="_blank">View site</a>';
+    if ($view === 'page' && $slug !== '' && in_array($slug, page_slugs(), true)) $b .= ' <a href="/' . e($slug) . '" target="_blank">View page</a>';
     $b .= '</div>';
 }
 if ($errors) $b .= '<div class="err"><strong>Not saved — please fix:</strong><ul>' . implode('', array_map(function ($m) { return '<li>' . e($m) . '</li>'; }, $errors)) . '</ul></div>';
@@ -126,11 +134,14 @@ switch ($view) {
     case 'work':    $b .= view_work_list(); break;
     case 'edit':    $b .= view_work_edit($slug, $draft, $isAdmin); break;
     case 'history': $b .= view_history(); break;
+    case 'pages':   $b .= view_pages_list(); break;
+    case 'page':    $b .= view_page_edit($slug, $draft); break;
     default:
         $b .= '<div class="card"><h2>What do you want to edit?</h2><p>'
             . '<a class="btn" href="/admin/?view=text">Home page text</a> '
             . '<a class="btn" href="/admin/?view=seo">Home page SEO</a> '
-            . '<a class="btn" href="/admin/?view=work">Case studies</a></p>'
+            . '<a class="btn" href="/admin/?view=work">Case studies</a> '
+            . '<a class="btn" href="/admin/?view=pages">Section pages</a></p>'
             . '<p class="hint">Changes go live as soon as you save. Made a mistake? <a href="/admin/?view=history">History</a> restores any earlier version.</p></div>';
 }
 page($b, true);

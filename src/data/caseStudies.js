@@ -6,7 +6,10 @@
 //  before React renders (see main.jsx) and fills the live bindings
 //  below; every other module keeps importing the same names.
 //  It also fetches /content/home.json and merges it into the
-//  home-page copy in ./index.js (bundled defaults stay if it fails).
+//  home-page copy in ./index.js (bundled defaults stay if it fails),
+//  and loads the "Read more" section pages: /defaults/pages.json
+//  (shipped with the code) merged by slug with /content/pages.json
+//  (written by the admin's first save; may not exist yet).
 // ─────────────────────────────────────────
 import { applyHomeContent } from './index';
 
@@ -21,6 +24,31 @@ export function getCaseStudy(slug) {
   return CASE_STUDIES.find((c) => c.slug === slug);
 }
 
+/** All section pages (enabled or not), defaults merged with live content. */
+export let PAGES = [];
+
+/** Live-content entries win field by field; pages only in the defaults are kept. */
+export function mergePages(defaults, content) {
+  const live = Object.fromEntries((Array.isArray(content) ? content : []).map((p) => [p.slug, p]));
+  const merged = (Array.isArray(defaults) ? defaults : []).map((d) => ({ ...d, ...(live[d.slug] || {}) }));
+  const known = new Set(merged.map((p) => p.slug));
+  return [...merged, ...Object.values(live).filter((p) => !known.has(p.slug))];
+}
+
+/** A section page that is switched on, or undefined. */
+export function getPage(slug) {
+  return PAGES.find((p) => p.slug === slug && p.enabled);
+}
+
+export function enabledPages() {
+  return PAGES.filter((p) => p.enabled);
+}
+
+/** The enabled page that expands a given home-page section anchor (e.g. 'about'). */
+export function pageForSection(anchor) {
+  return PAGES.find((p) => p.sectionAnchor === anchor && p.enabled);
+}
+
 async function getJson(url) {
   // no-cache = always revalidate with the server, so admin edits show immediately.
   const res = await fetch(url, { cache: 'no-cache' });
@@ -29,12 +57,15 @@ async function getJson(url) {
 }
 
 export async function loadContent() {
-  const [seo, work, home] = await Promise.all([
+  const [seo, work, home, pageDefaults, pageContent] = await Promise.all([
     getJson('/content/seo.json').catch(() => null),
     getJson('/content/work.json').catch(() => []),
     getJson('/content/home.json').catch(() => null),
+    getJson('/defaults/pages.json').catch(() => []),
+    getJson('/content/pages.json').catch(() => []),
   ]);
   if (seo) SEO_CONTENT = seo;
+  PAGES = mergePages(pageDefaults, pageContent);
   applyHomeContent(home);
   CASE_STUDIES = work
     .map((cs) => ({

@@ -7,11 +7,12 @@
 if (!defined('NOVA_ADMIN')) { http_response_code(404); exit; }
 
 require __DIR__ . '/richtext.php';
+require __DIR__ . '/shared.php';
 
 define('ROOT', dirname(__DIR__));
 // Local dev keeps users/backups/logs outside public/ (see vite.config.js).
 define('DATA', getenv('NOVA_ADMIN_DATA') ?: __DIR__ . '/data');
-const CONTENT_FILES = ['home.json', 'seo.json', 'work.json'];
+const CONTENT_FILES = ['home.json', 'pages.json', 'seo.json', 'work.json'];
 const KEEP_BACKUPS = 40;
 
 @mkdir(DATA . '/backups', 0750, true);
@@ -89,6 +90,30 @@ function photo_ids(): array {
 
 function case_slugs(): array { return array_column(read_content('work.json'), 'slug'); }
 
+// ---------- section pages ----------
+function load_pages(): array { return nova_load_pages(ROOT); }
+/** Slugs of section pages that are switched on (the only valid link targets). */
+function page_slugs(): array {
+    return array_column(array_filter(load_pages(), function ($p) { return !empty($p['enabled']); }), 'slug');
+}
+
+// ---------- edit-conflict guard ----------
+// Each editor form carries the version of the file it was loaded from. If the
+// file changed in the meantime (another person or another tab saved), the save
+// is refused instead of silently overwriting their work.
+function content_version(string $f): string {
+    $path = ROOT . "/content/$f";
+    return is_file($path) ? sha1_file($path) : 'none';
+}
+function version_field(string $f): string {
+    return '<input type="hidden" name="base_version" value="' . e(content_version($f)) . '">';
+}
+function version_error(string $f, $base): ?string {
+    if (is_string($base) && hash_equals(content_version($f), $base)) return null;
+    return 'Someone saved this content while you were editing (maybe in another tab). Your changes were NOT saved. '
+         . 'Copy anything you need, then reload the page to see the latest version.';
+}
+
 /** Normalise textarea input: unify line breaks, trim. */
 function clean_text($v): string { return trim(str_replace(["\r\n", "\r"], "\n", (string)$v)); }
 
@@ -107,7 +132,7 @@ function plain_field(string $name, string $label, string $value, int $min, int $
 function rich_field(string $name, string $label, string $value, int $min, int $max, string $hint = ''): string {
     return '<label>' . e($label) . '</label>'
         . '<div class="rt-tools"><button type="button" class="btn2 small" data-insert-link>🔗 Insert link</button>'
-        . '<span class="hint">Select words, then click. Links: https://…, /work/…, /#services, mailto:…, tel:…</span></div>'
+        . '<span class="hint">Select words, then click. Links: https://…, /work/…, /about, /#services, mailto:…, tel:…</span></div>'
         . '<textarea name="' . e($name) . '" data-rich data-min="' . $min . '" data-max="' . $max . '">' . e($value) . '</textarea>'
         . '<div class="rt-preview" aria-live="polite"></div>'
         . ($hint ? '<div class="hint">' . $hint . '</div>' : '');
@@ -118,6 +143,56 @@ function page(string $body, bool $authed = false): void {
         ? e(current_user()) . ' <a href="/admin/">Home</a><a href="/admin/?view=history">History</a><a href="/admin/?logout=1">Log out</a>'
         : '';
     $csrf = $authed ? e(csrf()) : '';
+    // Field helpers. initFields(root) is re-run for blocks added later by the
+    // page editor (window.novaInitFields), so every field gets its counter and
+    // live link preview. Insert-link uses event delegation for the same reason.
+    $script = <<<'JS'
+(function(){
+  var csrf=document.body.dataset.csrf;
+  // Visible length: links count as their text only (the server re-checks).
+  function visible(v){return v.replace(/\[([^\[\]\n]+)\]\(([\x21-\x27\x2A-\x7E]+)\)/g,'$1')}
+  function counter(el){
+    if(!el.dataset.min&&!el.dataset.max)return;
+    var c=el._count;
+    if(!c){c=document.createElement('span');c.className='count';el._count=c;
+      var lab=el.previousElementSibling;while(lab&&lab.tagName!=='LABEL')lab=lab.previousElementSibling;
+      if(lab)lab.appendChild(c);else el.parentNode.insertBefore(c,el);}
+    var n=visible(el.value).length,min=+(el.dataset.min||0),max=+(el.dataset.max||1e9);
+    c.textContent=n+' chars (need '+min+'–'+max+')';c.className='count'+(n<min||n>max?' bad':'');
+  }
+  function preview(ta){
+    var prev=ta.nextElementSibling;if(!prev||!prev.classList.contains('rt-preview'))return;
+    var fd=new FormData();fd.append('action','preview');fd.append('csrf',csrf);fd.append('text',ta.value);
+    fd.append('min','0');fd.append('max','100000');
+    fetch('/admin/',{method:'POST',body:fd,credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
+      prev.innerHTML=j.links?'<strong style="font-size:12px;color:#6d665a">Preview:</strong> '+j.html:'';
+      (j.errors||[]).forEach(function(m){var d=document.createElement('div');d.className='err';d.textContent=m;prev.appendChild(d)});
+    }).catch(function(){});
+  }
+  function initFields(root){
+    root.querySelectorAll('[data-min],[data-max]').forEach(function(el){
+      if(el._inited)return;el._inited=true;el.addEventListener('input',function(){counter(el)});counter(el);
+    });
+    root.querySelectorAll('[data-rich]').forEach(function(ta){
+      if(ta._rich)return;ta._rich=true;var t;
+      ta.addEventListener('input',function(){clearTimeout(t);t=setTimeout(function(){preview(ta)},400)});preview(ta);
+    });
+  }
+  window.novaInitFields=function(root){initFields(root||document)};
+  window.novaRefreshField=function(el){counter(el);preview(el)};
+  document.addEventListener('click',function(ev){
+    var btn=ev.target.closest('[data-insert-link]');if(!btn)return;
+    var ta=btn.closest('.rt-tools').nextElementSibling,s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e);
+    var text=sel||prompt('Link text (the words people will click):','');if(!text)return;
+    var url=prompt('Link address — e.g. https://example.com, /work/project-slug, /about, /#services, mailto:name@x.com','https://');
+    if(!url||url==='https://')return;
+    url=encodeURI(url.trim()).replace(/%25([0-9A-F]{2})/gi,'%$1').replace(/\(/g,'%28').replace(/\)/g,'%29');
+    text=text.replace(/[\[\]]/g,'');
+    ta.setRangeText('['+text+']('+url+')',s,e,'end');ta.focus();ta.dispatchEvent(new Event('input'));
+  });
+  initFields(document);
+})();
+JS;
     echo <<<HTML
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>NOVA Content Manager</title><style>
@@ -142,44 +217,7 @@ table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:8px;bord
 .photo{display:grid;grid-template-columns:190px 1fr;gap:10px;margin-bottom:10px}
 .sticky-save{position:sticky;bottom:0;background:#fff;padding:12px 0;border-top:1px solid #eee}
 </style></head><body data-csrf="$csrf"><header><strong>NOVA Content Manager</strong><span>$nav</span></header><main>$body</main>
-<script>
-(function(){
-  var csrf=document.body.dataset.csrf;
-  // Visible length: links count as their text only (server re-checks).
-  function visible(v){return v.replace(/\[([^\[\]\\n]+)\]\(([\x21-\x27\x2A-\x7E]+)\)/g,'$1')}
-  document.querySelectorAll('[data-min]').forEach(function(el){
-    var c=document.createElement('span');c.className='count';
-    var lab=el.previousElementSibling;while(lab&&lab.tagName!=='LABEL')lab=lab.previousElementSibling;
-    if(lab)lab.appendChild(c);
-    function u(){var n=visible(el.value).length;c.textContent=n+' chars (need '+el.dataset.min+'–'+el.dataset.max+')';
-      c.className='count'+(n<+el.dataset.min||n>+el.dataset.max?' bad':'')}
-    el.addEventListener('input',u);u();
-  });
-  document.querySelectorAll('[data-rich]').forEach(function(ta){
-    var prev=ta.nextElementSibling,t;
-    function refresh(){
-      var fd=new FormData();fd.append('action','preview');fd.append('csrf',csrf);fd.append('text',ta.value);
-      fd.append('min',ta.dataset.min);fd.append('max',ta.dataset.max);
-      fetch('/admin/',{method:'POST',body:fd,credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
-        prev.innerHTML=j.links?'<strong style="font-size:12px;color:#6d665a">Preview:</strong> '+j.html:'';
-        if(j.errors&&j.errors.length){j.errors.forEach(function(m){var d=document.createElement('div');d.className='err';d.textContent=m;prev.appendChild(d)})}
-      }).catch(function(){});
-    }
-    ta.addEventListener('input',function(){clearTimeout(t);t=setTimeout(refresh,400)});refresh();
-  });
-  document.querySelectorAll('[data-insert-link]').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var ta=btn.parentNode.nextElementSibling,s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.slice(s,e);
-      var text=sel||prompt('Link text (the words people will click):','');if(!text)return;
-      var url=prompt('Link address — e.g. https://example.com, /work/project-slug, /#services, mailto:name@x.com','https://');
-      if(!url||url==='https://')return;
-      url=encodeURI(url.trim()).replace(/%25([0-9A-F]{2})/gi,'%$1').replace(/\(/g,'%28').replace(/\)/g,'%29');
-      text=text.replace(/[\[\]]/g,'');
-      ta.setRangeText('['+text+']('+url+')',s,e,'end');ta.focus();ta.dispatchEvent(new Event('input'));
-    });
-  });
-})();
-</script></body></html>
+<script>$script</script></body></html>
 HTML;
     exit;
 }

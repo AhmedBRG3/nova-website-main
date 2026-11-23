@@ -11,7 +11,7 @@ const KINDS = [
   ['external', /^https?:\/\/[A-Za-z0-9.-]+\.[A-Za-z]{2,}(:[0-9]{1,5})?([/?#][A-Za-z0-9\-._~:/?#[\]@!$&'*+,;=%]*)?$/],
   ['mailto', /^mailto:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/],
   ['tel', /^tel:\+?[0-9][0-9.-]{4,20}$/],
-  ['internal', /^(\/(work\/[a-z0-9-]+)?(#[a-z0-9-]+)?|#[a-z0-9-]+)$/],
+  ['internal', /^(\/((work\/)?[a-z0-9-]+)?(#[a-z0-9-]+)?|#[a-z0-9-]+)$/],
 ];
 
 export function linkKind(href) {
